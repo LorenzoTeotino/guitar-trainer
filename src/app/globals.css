@@ -150,6 +150,17 @@ button:not(:disabled) {
           background 0.15s ease;
 }
 
+.nota-pulsante {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.suffisso-pulsante {
+  margin-left: 1px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .pulsante-accordo:hover {
   transform: translateY(-1px);
 }
@@ -255,9 +266,22 @@ button:not(:disabled) {
   margin-bottom: 10px;
 }
 
-.visualizzatore-accordo h2 {
-  font-size: clamp(72px, 15vw, 150px);
+.nome-accordo {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
   line-height: 1;
+}
+
+.nota-principale {
+  font-size: clamp(72px, 15vw, 150px);
+  font-weight: 700;
+}
+
+.suffisso-accordo {
+  margin-left: 4px;
+  font-size: clamp(30px, 6vw, 60px);
+  font-weight: 700;
 }
 
 /* BATTITI */

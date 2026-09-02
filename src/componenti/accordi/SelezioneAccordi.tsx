@@ -15,21 +15,15 @@ export default function SelezioneAccordi({
                                          }: ProprietaSelezioneAccordi) {
     return (
         <div className="selezione-accordi">
-            {accordiDisponibili.map((accordo) => {
-                const nome =
-                    lingua === "italiano"
-                        ? accordo.nomeItaliano
-                        : accordo.nomeInglese;
-
-                return (
-                    <PulsanteAccordo
-                        key={accordo.id}
-                        nome={nome}
-                        selezionato={accordiSelezionati.includes(accordo.id)}
-                        alClick={() => alCambioSelezione(accordo.id)}
-                    />
-                );
-            })}
+            {accordiDisponibili.map((accordo) => (
+                <PulsanteAccordo
+                    key={accordo.id}
+                    accordo={accordo}
+                    lingua={lingua}
+                    selezionato={accordiSelezionati.includes(accordo.id)}
+                    alClick={() => alCambioSelezione(accordo.id)}
+                />
+            ))}
         </div>
     );
 }

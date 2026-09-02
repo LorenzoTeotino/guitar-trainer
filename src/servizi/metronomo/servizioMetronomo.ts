@@ -1,32 +1,54 @@
-export function calcolaMillisecondiPerBattito(bpm: number): number {
+let contestoAudio: AudioContext | null = null;
+
+function recuperaContestoAudio(): AudioContext {
+    if (!contestoAudio) {
+        contestoAudio = new AudioContext();
+    }
+
+    if (contestoAudio.state === "suspended") {
+        void contestoAudio.resume();
+    }
+
+    return contestoAudio;
+}
+
+export function calcolaMillisecondiPerBattito(
+    bpm: number
+): number {
     return 60000 / bpm;
 }
 
-export function riproduciBattito(accentato: boolean): void {
-    const contestoAudio = new AudioContext();
+export function riproduciBattito(
+    accentato: boolean
+): void {
+    const contesto = recuperaContestoAudio();
 
-    const oscillatore = contestoAudio.createOscillator();
-    const guadagno = contestoAudio.createGain();
+    const oscillatore = contesto.createOscillator();
+    const guadagno = contesto.createGain();
 
-    oscillatore.connect(guadagno);
-    guadagno.connect(contestoAudio.destination);
+    oscillatore.type = "square";
 
-    oscillatore.frequency.value = accentato ? 1000 : 700;
+    oscillatore.frequency.setValueAtTime(
+        accentato ? 1600 : 1100,
+        contesto.currentTime
+    );
 
     guadagno.gain.setValueAtTime(
-        0.25,
-        contestoAudio.currentTime
+        0.18,
+        contesto.currentTime
     );
 
     guadagno.gain.exponentialRampToValueAtTime(
         0.001,
-        contestoAudio.currentTime + 0.08
+        contesto.currentTime + 0.035
     );
 
-    oscillatore.start();
-    oscillatore.stop(contestoAudio.currentTime + 0.08);
+    oscillatore.connect(guadagno);
+    guadagno.connect(contesto.destination);
 
-    oscillatore.onended = () => {
-        contestoAudio.close();
-    };
+    oscillatore.start(contesto.currentTime);
+
+    oscillatore.stop(
+        contesto.currentTime + 0.035
+    );
 }
