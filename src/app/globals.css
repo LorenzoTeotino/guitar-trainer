@@ -11,8 +11,8 @@ body {
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background: #f4f5f7;
-  color: #181818;
+  background: #0b1020;
+  color: #e8ecf8;
 }
 
 button {
@@ -45,19 +45,20 @@ button:not(:disabled) {
 .intestazione h1 {
   font-size: 42px;
   margin-bottom: 10px;
+  color: #f3f5ff;
 }
 
 .intestazione p {
   max-width: 650px;
   line-height: 1.6;
-  color: #666;
+  color: #9da8c7;
 }
 
 /* PANNELLI */
 
 .pannello {
-  background: white;
-  border: 1px solid #dedede;
+  background: #151b2e;
+  border: 1px solid #303a55;
   border-radius: 16px;
   padding: 24px;
   margin-bottom: 20px;
@@ -66,6 +67,7 @@ button:not(:disabled) {
 .pannello h2 {
   font-size: 20px;
   margin-bottom: 16px;
+  color: #f3f5ff;
 }
 
 /* LINGUA */
@@ -77,17 +79,25 @@ button:not(:disabled) {
 
 .selettore-lingua button {
   flex: 1;
-  border: 1px solid #d5d5d5;
-  background: #f7f7f7;
+  border: 1px solid #303a55;
+  background: #20283d;
+  color: #e8ecf8;
   border-radius: 10px;
   padding: 12px 18px;
   font-weight: 700;
+  transition:
+          background 0.15s ease,
+          border-color 0.15s ease;
+}
+
+.selettore-lingua button:hover {
+  background: #29324a;
 }
 
 .selettore-lingua button.attivo {
-  background: #181818;
-  color: white;
-  border-color: #181818;
+  background: #8b5cf6;
+  color: #ffffff;
+  border-color: #8b5cf6;
 }
 
 /* ACCORDI */
@@ -106,7 +116,7 @@ button:not(:disabled) {
 
 .intestazione-sezione p {
   font-size: 14px;
-  color: #777;
+  color: #9da8c7;
 }
 
 .azioni-selezione {
@@ -115,10 +125,16 @@ button:not(:disabled) {
 }
 
 .azioni-selezione button {
-  border: 1px solid #d5d5d5;
-  background: white;
+  border: 1px solid #303a55;
+  background: #20283d;
+  color: #e8ecf8;
   border-radius: 8px;
   padding: 8px 12px;
+  transition: background 0.15s ease;
+}
+
+.azioni-selezione button:hover {
+  background: #29324a;
 }
 
 .selezione-accordi {
@@ -129,14 +145,16 @@ button:not(:disabled) {
 
 .pulsante-accordo {
   min-height: 52px;
-  border: 1px solid #d7d7d7;
-  background: #f8f8f8;
+  border: 1px solid #303a55;
+  background: #20283d;
+  color: #e8ecf8;
   border-radius: 10px;
   padding: 10px;
   font-weight: 700;
   transition:
           transform 0.15s ease,
-          background 0.15s ease;
+          background 0.15s ease,
+          border-color 0.15s ease;
 }
 
 .nota-pulsante {
@@ -152,12 +170,13 @@ button:not(:disabled) {
 
 .pulsante-accordo:hover {
   transform: translateY(-1px);
+  background: #29324a;
 }
 
 .pulsante-accordo.selezionato {
-  background: #181818;
-  border-color: #181818;
-  color: white;
+  background: #8b5cf6;
+  border-color: #8b5cf6;
+  color: #ffffff;
 }
 
 /* CONFIGURAZIONE */
@@ -170,6 +189,7 @@ button:not(:disabled) {
 
 .configurazione-esercizio h3 {
   margin-bottom: 14px;
+  color: #f3f5ff;
 }
 
 .pulsante-contatore {
@@ -181,16 +201,23 @@ button:not(:disabled) {
 .pulsante-contatore button {
   width: 44px;
   height: 44px;
-  border: 1px solid #d5d5d5;
-  background: #f7f7f7;
+  border: 1px solid #303a55;
+  background: #20283d;
+  color: #e8ecf8;
   border-radius: 10px;
   font-size: 22px;
+  transition: background 0.15s ease;
+}
+
+.pulsante-contatore button:hover {
+  background: #29324a;
 }
 
 .pulsante-contatore strong {
   min-width: 60px;
   text-align: center;
   font-size: 22px;
+  color: #f3f5ff;
 }
 
 /* AVVIO */
@@ -200,10 +227,15 @@ button:not(:disabled) {
   border: none;
   border-radius: 14px;
   padding: 18px;
-  background: #181818;
-  color: white;
+  background: #8b5cf6;
+  color: #ffffff;
   font-size: 18px;
   font-weight: 700;
+  transition: background 0.15s ease;
+}
+
+.pulsante-avvia:hover:not(:disabled) {
+  background: #7c3aed;
 }
 
 .pulsante-avvia:disabled {
@@ -214,7 +246,7 @@ button:not(:disabled) {
 .messaggio-selezione {
   text-align: center;
   margin-top: 10px;
-  color: #777;
+  color: #9da8c7;
   font-size: 14px;
 }
 
@@ -231,7 +263,8 @@ button:not(:disabled) {
   align-items: center;
   justify-content: center;
 
-  background: white;
+  background: #151b2e;
+  border: 1px solid #303a55;
   border-radius: 24px;
   padding: 32px;
 }
@@ -240,7 +273,7 @@ button:not(:disabled) {
   width: 100%;
   display: flex;
   justify-content: space-between;
-  color: #777;
+  color: #9da8c7;
   font-weight: 700;
   margin-bottom: 50px;
 }
@@ -251,7 +284,7 @@ button:not(:disabled) {
 }
 
 .visualizzatore-accordo p {
-  color: #777;
+  color: #9da8c7;
   margin-bottom: 10px;
 }
 
@@ -265,12 +298,14 @@ button:not(:disabled) {
 .nota-principale {
   font-size: clamp(72px, 15vw, 150px);
   font-weight: 700;
+  color: #f3f5ff;
 }
 
 .suffisso-accordo {
   margin-left: 4px;
   font-size: clamp(30px, 6vw, 60px);
   font-weight: 700;
+  color: #f3f5ff;
 }
 
 /* BATTITI */
@@ -291,7 +326,9 @@ button:not(:disabled) {
   align-items: center;
   justify-content: center;
 
-  border: 2px solid #dedede;
+  background: #20283d;
+  border: 2px solid #303a55;
+  color: #e8ecf8;
   border-radius: 50%;
 
   font-size: 20px;
@@ -299,13 +336,14 @@ button:not(:disabled) {
 
   transition:
           transform 0.15s ease,
-          background 0.15s ease;
+          background 0.15s ease,
+          border-color 0.15s ease;
 }
 
 .contatore-battiti .battito-attivo {
-  background: #181818;
-  border-color: #181818;
-  color: white;
+  background: #8b5cf6;
+  border-color: #8b5cf6;
+  color: #ffffff;
   transform: scale(1.2);
 }
 
@@ -326,16 +364,26 @@ button:not(:disabled) {
   font-weight: 700;
   line-height: 1;
   text-align: center;
+  color: #8b5cf6;
 }
 
 /* TERMINA */
 
 .pulsante-termina {
-  border: 1px solid #d5d5d5;
-  background: white;
+  border: 1px solid #303a55;
+  background: #20283d;
+  color: #e8ecf8;
   padding: 14px 24px;
   border-radius: 10px;
   font-weight: 700;
+  transition:
+          background 0.15s ease,
+          border-color 0.15s ease;
+}
+
+.pulsante-termina:hover {
+  background: #29324a;
+  border-color: #46516f;
 }
 
 /* TABLET E TELEFONO */
