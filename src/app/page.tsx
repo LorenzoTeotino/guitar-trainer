@@ -80,8 +80,6 @@ export default function PaginaPrincipale() {
         <main className="pagina">
           <PreConteggio
               battitoCorrente={battitoPreConteggio}
-              battitiTotali={battitiPerAccordo}
-              bpm={bpm}
               alTermine={fermaEsercizio}
           />
         </main>
@@ -110,12 +108,7 @@ export default function PaginaPrincipale() {
       <main className="pagina">
         <div className="contenitore-principale">
           <header className="intestazione">
-          <span className="sovratitolo">
-            Allenamento musicale
-          </span>
-
             <h1>Guitar Trainer</h1>
-
             <p>
               Seleziona gli accordi che vuoi
               esercitare e allenati a cambiarli

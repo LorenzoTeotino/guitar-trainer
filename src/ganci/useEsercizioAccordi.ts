@@ -39,7 +39,7 @@ export function useEsercizioAccordi({
         useState(1);
 
     const [battitoPreConteggio, setBattitoPreConteggio] =
-        useState(1);
+        useState(3);
 
     const avviaEsercizio = useCallback(() => {
         if (accordi.length === 0) {
@@ -48,12 +48,10 @@ export function useEsercizioAccordi({
 
         setAccordoCorrente(null);
         setBattitoCorrente(1);
-        setBattitoPreConteggio(1);
+        setBattitoPreConteggio(3);
 
         setPreConteggioAttivo(true);
         setEsercizioAvviato(false);
-
-        riproduciBattito(true);
     }, [accordi]);
 
     const fermaEsercizio = useCallback(() => {
@@ -63,7 +61,7 @@ export function useEsercizioAccordi({
         setAccordoCorrente(null);
 
         setBattitoCorrente(1);
-        setBattitoPreConteggio(1);
+        setBattitoPreConteggio(3);
     }, []);
 
     useEffect(() => {
@@ -75,38 +73,29 @@ export function useEsercizioAccordi({
             calcolaMillisecondiPerBattito(bpm);
 
         const intervallo = window.setInterval(() => {
-            setBattitoPreConteggio(
-                (battitoPrecedente) => {
-                    if (
-                        battitoPrecedente >= battitiPerAccordo
-                    ) {
-                        window.clearInterval(intervallo);
-
-                        const primoAccordo =
-                            selezionaAccordoCasuale(accordi);
-
-                        setAccordoCorrente(primoAccordo);
-
-                        setPreConteggioAttivo(false);
-                        setEsercizioAvviato(true);
-
-                        setBattitoCorrente(1);
-
-                        riproduciBattito(true);
-
-                        return 1;
-                    }
-
-                    const nuovoBattito =
-                        battitoPrecedente + 1;
-
-                    riproduciBattito(
-                        nuovoBattito === 1
-                    );
-
-                    return nuovoBattito;
+            setBattitoPreConteggio((valorePrecedente) => {
+                if (valorePrecedente > 1) {
+                    return valorePrecedente - 1;
                 }
-            );
+
+                window.clearInterval(intervallo);
+
+                const primoAccordo =
+                    selezionaAccordoCasuale(accordi);
+
+                setBattitoPreConteggio(0);
+
+                window.setTimeout(() => {
+                    setAccordoCorrente(primoAccordo);
+                    setPreConteggioAttivo(false);
+                    setEsercizioAvviato(true);
+                    setBattitoCorrente(1);
+
+                    riproduciBattito(true);
+                }, 300);
+
+                return 0;
+            });
         }, millisecondiPerBattito);
 
         return () => {
@@ -115,7 +104,6 @@ export function useEsercizioAccordi({
     }, [
         preConteggioAttivo,
         bpm,
-        battitiPerAccordo,
         accordi,
     ]);
 

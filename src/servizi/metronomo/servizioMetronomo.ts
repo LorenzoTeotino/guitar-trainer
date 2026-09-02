@@ -18,6 +18,14 @@ export function calcolaMillisecondiPerBattito(
     return 60000 / bpm;
 }
 
+export async function preparaMetronomo(): Promise<void> {
+    const contesto = recuperaContestoAudio();
+
+    if (contesto.state === "suspended") {
+        await contesto.resume();
+    }
+}
+
 export function riproduciBattito(
     accentato: boolean
 ): void {

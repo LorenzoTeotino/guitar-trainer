@@ -42,16 +42,6 @@ button:not(:disabled) {
   margin-bottom: 28px;
 }
 
-.sovratitolo {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #666;
-}
-
 .intestazione h1 {
   font-size: 42px;
   margin-bottom: 10px;
@@ -133,8 +123,7 @@ button:not(:disabled) {
 
 .selezione-accordi {
   display: grid;
-  grid-template-columns:
-    repeat(auto-fill, minmax(110px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   gap: 10px;
 }
 
@@ -320,6 +309,25 @@ button:not(:disabled) {
   transform: scale(1.2);
 }
 
+/* PRE-CONTEGGIO */
+
+.pre-conteggio-semplice {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 80px;
+}
+
+.numero-pre-conteggio {
+  font-size: clamp(140px, 22vw, 220px);
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+}
+
 /* TERMINA */
 
 .pulsante-termina {
@@ -372,21 +380,11 @@ button:not(:disabled) {
     margin-bottom: 45px;
   }
 
-  .pre-conteggio {
-    width: 100%;
-    text-align: center;
+  .pre-conteggio-semplice {
+    margin-bottom: 60px;
   }
 
-  .pre-conteggio p {
-    margin-bottom: 20px;
-    font-size: 20px;
-    font-weight: 700;
-    color: #777;
-  }
-
-  .pre-conteggio h2 {
-    font-size: clamp(90px, 18vw, 170px);
-    line-height: 1;
-    margin-bottom: 50px;
+  .numero-pre-conteggio {
+    font-size: clamp(110px, 35vw, 170px);
   }
 }
