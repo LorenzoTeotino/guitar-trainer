@@ -1,15 +1,20 @@
 import { Accordo } from "@/tipi/Accordo";
 import { LinguaAccordi } from "@/tipi/LinguaAccordi";
+import { TempoMusicale } from "@/tipi/TempoMusicale";
 
 import VisualizzatoreAccordo from "@/componenti/esercizio/VisualizzatoreAccordo";
 import IndicatoreTempo from "@/componenti/esercizio/IndicatoreTempo";
 
 interface ProprietaSchermataEsercizio {
-    accordoCorrente: Accordo;
+    accordoCorrente: Accordo | null;
     lingua: LinguaAccordi;
+
     posizionePallinoCorrente: number;
     palliniTotali: number;
+
+    tempoMusicale: TempoMusicale;
     bpm: number;
+
     alTermine: () => void;
 }
 
@@ -18,22 +23,30 @@ export default function SchermataEsercizio({
                                                lingua,
                                                posizionePallinoCorrente,
                                                palliniTotali,
+                                               tempoMusicale,
                                                bpm,
                                                alTermine,
                                            }: ProprietaSchermataEsercizio) {
+    const soloMetronomo = accordoCorrente === null;
+
     return (
         <section className="schermata-esercizio">
             <div className="barra-esercizio">
                 <span>{bpm} BPM</span>
+                <span>{tempoMusicale.nome}</span>
             </div>
 
-            <VisualizzatoreAccordo
-                accordo={accordoCorrente}
-                lingua={lingua}
-            />
+            {!soloMetronomo && (
+                <VisualizzatoreAccordo
+                    accordo={accordoCorrente}
+                    lingua={lingua}
+                />
+            )}
 
             <IndicatoreTempo
-                posizionePallinoCorrente={posizionePallinoCorrente}
+                posizionePallinoCorrente={
+                    posizionePallinoCorrente
+                }
                 palliniTotali={palliniTotali}
             />
 
@@ -42,7 +55,9 @@ export default function SchermataEsercizio({
                 className="pulsante-termina"
                 onClick={alTermine}
             >
-                Termina esercizio
+                {soloMetronomo
+                    ? "Termina metronomo"
+                    : "Termina esercizio"}
             </button>
         </section>
     );

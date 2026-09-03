@@ -28,11 +28,8 @@ export function useEsercizioAccordi({
                                         bpm,
                                         tempoMusicale,
                                     }: ProprietaUseEsercizioAccordi) {
-    const [esercizioAvviato, setEsercizioAvviato] =
-        useState(false);
-
-    const [preConteggioAttivo, setPreConteggioAttivo] =
-        useState(false);
+    const [esercizioAvviato, setEsercizioAvviato] = useState(false);
+    const [preConteggioAttivo, setPreConteggioAttivo] = useState(false);
 
     const [accordoCorrente, setAccordoCorrente] =
         useState<Accordo | null>(null);
@@ -47,11 +44,10 @@ export function useEsercizioAccordi({
         setContoAllaRovescia,
     ] = useState(3);
 
-    const avviaEsercizio = useCallback(async() => {
-        if (accordi.length === 0) {
-            return;
-        }
+    const suddivisioniPerBattuta =
+        tempoMusicale.suddivisioniPerBattuta;
 
+    const avviaEsercizio = useCallback(async () => {
         await preparaMetronomo();
 
         setAccordoCorrente(null);
@@ -60,14 +56,13 @@ export function useEsercizioAccordi({
 
         setPreConteggioAttivo(true);
         setEsercizioAvviato(false);
-    }, [accordi]);
+    }, []);
 
     const fermaEsercizio = useCallback(() => {
         setEsercizioAvviato(false);
         setPreConteggioAttivo(false);
 
         setAccordoCorrente(null);
-
         setPosizionePallinoCorrente(1);
         setContoAllaRovescia(3);
     }, []);
@@ -88,12 +83,14 @@ export function useEsercizioAccordi({
 
                 window.clearInterval(intervallo);
 
-                const primoAccordo =
-                    selezionaAccordoCasuale(accordi);
-
                 setContoAllaRovescia(0);
 
                 window.setTimeout(() => {
+                    const primoAccordo =
+                        accordi.length > 0
+                            ? selezionaAccordoCasuale(accordi)
+                            : null;
+
                     setAccordoCorrente(primoAccordo);
 
                     setPreConteggioAttivo(false);
@@ -118,10 +115,7 @@ export function useEsercizioAccordi({
     ]);
 
     useEffect(() => {
-        if (
-            !esercizioAvviato ||
-            preConteggioAttivo
-        ) {
+        if (!esercizioAvviato || preConteggioAttivo) {
             return;
         }
 
@@ -133,15 +127,17 @@ export function useEsercizioAccordi({
                 (posizionePrecedente) => {
                     if (
                         posizionePrecedente >=
-                        tempoMusicale.suddivisioniPerBattuta
+                        suddivisioniPerBattuta
                     ) {
-                        setAccordoCorrente(
-                            (accordoPrecedente) =>
-                                selezionaAccordoCasuale(
-                                    accordi,
-                                    accordoPrecedente
-                                )
-                        );
+                        if (accordi.length > 0) {
+                            setAccordoCorrente(
+                                (accordoPrecedente) =>
+                                    selezionaAccordoCasuale(
+                                        accordi,
+                                        accordoPrecedente
+                                    )
+                            );
+                        }
 
                         suonoMetronomo(true);
 
@@ -151,7 +147,12 @@ export function useEsercizioAccordi({
                     const nuovaPosizione =
                         posizionePrecedente + 1;
 
-                    suonoMetronomo(false);
+                    const accentato =
+                        tempoMusicale.accenti.includes(
+                            nuovaPosizione
+                        );
+
+                    suonoMetronomo(accentato);
 
                     return nuovaPosizione;
                 }
@@ -165,8 +166,9 @@ export function useEsercizioAccordi({
         esercizioAvviato,
         preConteggioAttivo,
         bpm,
-        tempoMusicale,
+        suddivisioniPerBattuta,
         accordi,
+        tempoMusicale.accenti,
     ]);
 
     return {

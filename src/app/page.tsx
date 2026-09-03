@@ -86,10 +86,7 @@ export default function PaginaPrincipale() {
     );
   }
 
-  if (
-      esercizioAvviato &&
-      accordoCorrente
-  ) {
+  if (esercizioAvviato) {
     return (
         <main className="pagina">
           <SchermataEsercizio
@@ -101,6 +98,7 @@ export default function PaginaPrincipale() {
               palliniTotali={
                 tempoMusicale.suddivisioniPerBattuta
               }
+              tempoMusicale={tempoMusicale}
               bpm={bpm}
               alTermine={fermaEsercizio}
           />
@@ -185,19 +183,9 @@ export default function PaginaPrincipale() {
               type="button"
               className="pulsante-avvia"
               onClick={avviaEsercizio}
-              disabled={
-                  accordiSelezionati.length === 0
-              }
           >
             Avvia esercizio
           </button>
-
-          {accordiSelezionati.length === 0 && (
-              <p className="messaggio-selezione">
-                Seleziona almeno un accordo per
-                iniziare.
-              </p>
-          )}
         </div>
       </main>
   );
