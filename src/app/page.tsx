@@ -2,21 +2,26 @@
 
 import { useMemo, useState } from "react";
 
-import SelettoreLinguaAccordi from "@/componenti/accordi/SelettoreLinguaAccordi";
 import SelezioneAccordi from "@/componenti/accordi/SelezioneAccordi";
+
+import NavigazionePrincipale from "@/componenti/comune/NavigazionePrincipale";
+
 import ConfigurazioneEsercizio from "@/componenti/esercizio/ConfigurazioneEsercizio";
-import SchermataEsercizio from "@/componenti/esercizio/SchermataEsercizio";
 import PreConteggio from "@/componenti/esercizio/PreConteggio";
+import SchermataEsercizio from "@/componenti/esercizio/SchermataEsercizio";
+
+import ConfigurazioneMetronomo from "@/componenti/metronomo/ConfigurazioneMetronomo";
+
+import { BPM_PREDEFINITI } from "@/costanti/configurazioneEsercizio";
 
 import { accordiDisponibili } from "@/dati/accordi/accordiDisponibili";
 import { TEMPO_QUATTRO_QUARTI } from "@/dati/tempi/tempiDisponibili";
 
-import { BPM_PREDEFINITI } from "@/costanti/configurazioneEsercizio";
+import { useEsercizioAccordi } from "@/ganci/useEsercizioAccordi";
 
 import { LinguaAccordi } from "@/tipi/LinguaAccordi";
+import { SezioneApplicazione } from "@/tipi/SezioneApplicazione";
 import { TempoMusicale } from "@/tipi/TempoMusicale";
-
-import { useEsercizioAccordi } from "@/ganci/useEsercizioAccordi";
 
 export default function PaginaPrincipale() {
   const [lingua, setLingua] =
@@ -29,11 +34,21 @@ export default function PaginaPrincipale() {
       useState(BPM_PREDEFINITI);
 
   const [tempoMusicale, setTempoMusicale] =
-      useState<TempoMusicale>(TEMPO_QUATTRO_QUARTI);
+      useState<TempoMusicale>(
+          TEMPO_QUATTRO_QUARTI
+      );
+
+  const [sezioneAttiva, setSezioneAttiva] =
+      useState<SezioneApplicazione>(
+          "esercizio"
+      );
 
   const accordiAttivi = useMemo(() => {
-    return accordiDisponibili.filter((accordo) =>
-        accordiSelezionati.includes(accordo.id)
+    return accordiDisponibili.filter(
+        (accordo) =>
+            accordiSelezionati.includes(
+                accordo.id
+            )
     );
   }, [accordiSelezionati]);
 
@@ -46,7 +61,10 @@ export default function PaginaPrincipale() {
     avviaEsercizio,
     fermaEsercizio,
   } = useEsercizioAccordi({
-    accordi: accordiAttivi,
+    accordi:
+        sezioneAttiva === "esercizio"
+            ? accordiAttivi
+            : [],
     bpm,
     tempoMusicale,
   });
@@ -54,20 +72,32 @@ export default function PaginaPrincipale() {
   const cambiaSelezioneAccordo = (
       idAccordo: string
   ) => {
-    setAccordiSelezionati((accordiPrecedenti) => {
-      if (accordiPrecedenti.includes(idAccordo)) {
-        return accordiPrecedenti.filter(
-            (id) => id !== idAccordo
-        );
-      }
+    setAccordiSelezionati(
+        (accordiPrecedenti) => {
+          if (
+              accordiPrecedenti.includes(
+                  idAccordo
+              )
+          ) {
+            return accordiPrecedenti.filter(
+                (id) =>
+                    id !== idAccordo
+            );
+          }
 
-      return [...accordiPrecedenti, idAccordo];
-    });
+          return [
+            ...accordiPrecedenti,
+            idAccordo,
+          ];
+        }
+    );
   };
 
   const selezionaTuttiGliAccordi = () => {
     setAccordiSelezionati(
-        accordiDisponibili.map((accordo) => accordo.id)
+        accordiDisponibili.map(
+            (accordo) => accordo.id
+        )
     );
   };
 
@@ -75,12 +105,28 @@ export default function PaginaPrincipale() {
     setAccordiSelezionati([]);
   };
 
+  const diminuisciBpm = () => {
+    setBpm((valore) =>
+        Math.max(30, valore - 1)
+    );
+  };
+
+  const aumentaBpm = () => {
+    setBpm((valore) =>
+        Math.min(300, valore + 1)
+    );
+  };
+
   if (preConteggioAttivo) {
     return (
         <main className="pagina">
           <PreConteggio
-              contoAllaRovescia={contoAllaRovescia}
-              alTermine={fermaEsercizio}
+              contoAllaRovescia={
+                contoAllaRovescia
+              }
+              alTermine={
+                fermaEsercizio
+              }
           />
         </main>
     );
@@ -90,17 +136,24 @@ export default function PaginaPrincipale() {
     return (
         <main className="pagina">
           <SchermataEsercizio
-              accordoCorrente={accordoCorrente}
+              accordoCorrente={
+                accordoCorrente
+              }
               lingua={lingua}
               posizionePallinoCorrente={
                 posizionePallinoCorrente
               }
               palliniTotali={
-                tempoMusicale.suddivisioniPerBattuta
+                tempoMusicale
+                    .suddivisioniPerBattuta
               }
-              tempoMusicale={tempoMusicale}
+              tempoMusicale={
+                tempoMusicale
+              }
               bpm={bpm}
-              alTermine={fermaEsercizio}
+              alTermine={
+                fermaEsercizio
+              }
           />
         </main>
     );
@@ -110,82 +163,160 @@ export default function PaginaPrincipale() {
       <main className="pagina">
         <div className="contenitore-principale">
           <header className="intestazione">
-            <h1>Guitar Trainer</h1>
+            <h1>
+              Guitar Trainer
+            </h1>
 
             <p>
-              Seleziona gli accordi che vuoi
-              esercitare e allenati a cambiarli
-              mantenendo il ritmo.
+              Allenati con gli accordi
+              oppure usa il metronomo
+              per mantenere il ritmo.
             </p>
           </header>
 
-          <section className="pannello">
-            <h2>Nomi degli accordi</h2>
-
-            <SelettoreLinguaAccordi
-                lingua={lingua}
-                alCambioLingua={setLingua}
-            />
-          </section>
-
-          <section className="pannello">
-            <div className="intestazione-sezione">
-              <div>
-                <h2>Accordi</h2>
-
-                <p>
-                  {accordiSelezionati.length} selezionati
-                </p>
-              </div>
-
-              <div className="azioni-selezione">
-                <button
-                    type="button"
-                    onClick={selezionaTuttiGliAccordi}
-                >
-                  Tutti
-                </button>
-
-                <button
-                    type="button"
-                    onClick={deselezionaTuttiGliAccordi}
-                >
-                  Nessuno
-                </button>
-              </div>
-            </div>
-
-            <SelezioneAccordi
-                lingua={lingua}
-                accordiSelezionati={
-                  accordiSelezionati
-                }
-                alCambioSelezione={
-                  cambiaSelezioneAccordo
-                }
-            />
-          </section>
-
-          <ConfigurazioneEsercizio
-              bpm={bpm}
-              tempoMusicale={tempoMusicale}
-              diminuisciBpm={() =>
-                  setBpm((valore) => Math.max(30, valore - 1))
+          <NavigazionePrincipale
+              sezioneAttiva={
+                sezioneAttiva
               }
-              aumentaBpm={() =>
-                  setBpm((valore) => Math.min(300, valore + 1))
+              alCambioSezione={
+                setSezioneAttiva
               }
-              alCambioBpm={setBpm}
-              alCambioTempoMusicale={setTempoMusicale}
           />
 
-          <button
-              type="button"
-              className="pulsante-avvia"
-              onClick={avviaEsercizio}
-          >
-            Avvia esercizio
-          </button>
+          {sezioneAttiva ===
+              "esercizio" && (
+                  <>
+                    <section className="pannello">
+                      <div className="intestazione-sezione">
+                        <div>
+                          <h2>
+                            Accordi
+                          </h2>
+
+                          <p>
+                            {
+                              accordiSelezionati.length
+                            }{" "}
+                            selezionati
+                          </p>
+                        </div>
+
+                        <div className="azioni-selezione">
+                          <select
+                              className="selettore-lingua-accordi"
+                              value={lingua}
+                              onChange={(evento) =>
+                                  setLingua(
+                                      evento.target.value as LinguaAccordi
+                                  )
+                              }
+                          >
+                            <option value="italiano">
+                              Italiano
+                            </option>
+
+                            <option value="inglese">
+                              Inglese
+                            </option>
+                          </select>
+
+                          <button
+                              type="button"
+                              onClick={selezionaTuttiGliAccordi}
+                          >
+                            Tutti
+                          </button>
+
+                          <button
+                              type="button"
+                              onClick={deselezionaTuttiGliAccordi}
+                          >
+                            Nessuno
+                          </button>
+                        </div>
+                      </div>
+
+                      <SelezioneAccordi
+                          lingua={
+                            lingua
+                          }
+                          accordiSelezionati={
+                            accordiSelezionati
+                          }
+                          alCambioSelezione={
+                            cambiaSelezioneAccordo
+                          }
+                      />
+                    </section>
+
+                    <ConfigurazioneEsercizio
+                        bpm={bpm}
+                        tempoMusicale={
+                          tempoMusicale
+                        }
+                        diminuisciBpm={
+                          diminuisciBpm
+                        }
+                        aumentaBpm={
+                          aumentaBpm
+                        }
+                        alCambioBpm={
+                          setBpm
+                        }
+                        alCambioTempoMusicale={
+                          setTempoMusicale
+                        }
+                    />
+
+                    <button
+                        type="button"
+                        className="pulsante-avvia"
+                        onClick={
+                          avviaEsercizio
+                        }
+                        disabled={
+                            accordiSelezionati.length ===
+                            0
+                        }
+                    >
+                      Avvia esercizio
+                    </button>
+
+                    {accordiSelezionati.length ===
+                        0 && (
+                            <p className="messaggio-selezione">
+                              Seleziona almeno
+                              un accordo per
+                              iniziare.
+                            </p>
+                        )}
+                  </>
+              )}
+
+          {sezioneAttiva ===
+              "metronomo" && (
+                  <ConfigurazioneMetronomo
+                      bpm={bpm}
+                      tempoMusicale={
+                        tempoMusicale
+                      }
+                      diminuisciBpm={
+                        diminuisciBpm
+                      }
+                      aumentaBpm={
+                        aumentaBpm
+                      }
+                      alCambioBpm={
+                        setBpm
+                      }
+                      alCambioTempoMusicale={
+                        setTempoMusicale
+                      }
+                      alAvvio={
+                        avviaEsercizio
+                      }
+                  />
+              )}
         </div>
       </main>
   );

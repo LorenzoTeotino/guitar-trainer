@@ -54,6 +54,51 @@ button:not(:disabled) {
   color: #9da8c7;
 }
 
+/* NAVIGAZIONE PRINCIPALE */
+
+.navigazione-principale {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+
+  margin-bottom: 22px;
+  padding: 6px;
+
+  background: #151b2e;
+
+  border: 1px solid #303a55;
+  border-radius: 14px;
+}
+
+.navigazione-principale button {
+  min-height: 48px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: transparent;
+  color: #9da8c7;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  transition:
+          background 0.15s ease,
+          color 0.15s ease;
+}
+
+.navigazione-principale button:hover {
+  background: #20283d;
+  color: #f3f5ff;
+}
+
+.navigazione-principale button.attivo {
+  background: #8b5cf6;
+  color: #ffffff;
+}
+
 /* PANNELLI */
 
 .pannello {
@@ -122,6 +167,37 @@ button:not(:disabled) {
 .azioni-selezione {
   display: flex;
   gap: 8px;
+}
+
+.selettore-lingua-accordi {
+  height: 40px;
+
+  padding: 0 12px;
+
+  background: #20283d;
+  color: #e8ecf8;
+
+  border: 1px solid #303a55;
+  border-radius: 8px;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  outline: none;
+
+  cursor: pointer;
+
+  transition:
+          background 0.15s ease,
+          border-color 0.15s ease;
+}
+
+.selettore-lingua-accordi:hover {
+  background: #29324a;
+}
+
+.selettore-lingua-accordi:focus {
+  border-color: #8b5cf6;
 }
 
 .azioni-selezione button {
@@ -272,6 +348,24 @@ button:not(:disabled) {
 
 .selettore-tempo:focus {
   border-color: #8b5cf6;
+}
+
+/* METRONOMO */
+
+.intestazione-sezione-metronomo {
+  margin-bottom: 20px;
+}
+
+.intestazione-sezione-metronomo h2 {
+  margin-bottom: 6px;
+
+  font-size: 24px;
+  color: #f3f5ff;
+}
+
+.intestazione-sezione-metronomo p {
+  color: #9da8c7;
+  line-height: 1.5;
 }
 
 /* AVVIO */
