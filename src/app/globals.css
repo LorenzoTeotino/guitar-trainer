@@ -220,6 +220,37 @@ button:not(:disabled) {
   color: #f3f5ff;
 }
 
+.selettore-tempo {
+  width: 100%;
+  max-width: 90px;
+  height: 44px;
+
+  padding: 0 14px;
+
+  background: #20283d;
+  color: #f3f5ff;
+
+  border: 1px solid #303a55;
+  border-radius: 10px;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  outline: none;
+
+  transition:
+          background 0.15s ease,
+          border-color 0.15s ease;
+}
+
+.selettore-tempo:hover {
+  background: #29324a;
+}
+
+.selettore-tempo:focus {
+  border-color: #8b5cf6;
+}
+
 /* AVVIO */
 
 .pulsante-avvia {

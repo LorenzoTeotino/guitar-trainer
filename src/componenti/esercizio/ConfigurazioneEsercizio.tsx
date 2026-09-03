@@ -5,13 +5,9 @@ import { TEMPI_DISPONIBILI } from "@/dati/tempi/tempiDisponibili";
 interface ProprietaConfigurazioneEsercizio {
     bpm: number;
     tempoMusicale: TempoMusicale;
-
     diminuisciBpm: () => void;
     aumentaBpm: () => void;
-
-    alCambioTempoMusicale: (
-        tempoMusicale: TempoMusicale
-    ) => void;
+    alCambioTempoMusicale: (tempo: TempoMusicale) => void;
 }
 
 export default function ConfigurazioneEsercizio({
@@ -21,6 +17,18 @@ export default function ConfigurazioneEsercizio({
                                                     aumentaBpm,
                                                     alCambioTempoMusicale,
                                                 }: ProprietaConfigurazioneEsercizio) {
+    const cambiaTempoMusicale = (
+        evento: React.ChangeEvent<HTMLSelectElement>
+    ) => {
+        const nuovoTempo = TEMPI_DISPONIBILI.find(
+            (tempo) => tempo.id === evento.target.value
+        );
+
+        if (nuovoTempo) {
+            alCambioTempoMusicale(nuovoTempo);
+        }
+    };
+
     return (
         <section className="pannello">
             <div className="configurazione-esercizio">
@@ -37,24 +45,20 @@ export default function ConfigurazioneEsercizio({
                 <div>
                     <h3>Tempo</h3>
 
-                    <div className="selettore-tempo">
+                    <select
+                        className="selettore-tempo"
+                        value={tempoMusicale.id}
+                        onChange={cambiaTempoMusicale}
+                    >
                         {TEMPI_DISPONIBILI.map((tempo) => (
-                            <button
+                            <option
                                 key={tempo.id}
-                                type="button"
-                                className={
-                                    tempoMusicale.id === tempo.id
-                                        ? "tempo-attivo"
-                                        : ""
-                                }
-                                onClick={() =>
-                                    alCambioTempoMusicale(tempo)
-                                }
+                                value={tempo.id}
                             >
                                 {tempo.nome}
-                            </button>
+                            </option>
                         ))}
-                    </div>
+                    </select>
                 </div>
             </div>
         </section>
