@@ -1,12 +1,25 @@
 import ConfigurazioneEsercizio from "@/componenti/esercizio/ConfigurazioneEsercizio";
+import IndicatoreTempo from "@/componenti/esercizio/IndicatoreTempo";
+import MetronomoMeccanico from "@/componenti/metronomo/MetronomoMeccanico";
+
 import { TempoMusicale } from "@/tipi/TempoMusicale";
+import { TipoMetronomo } from "@/tipi/TipoMetronomo";
+
+import { PosizionePendolo } from "@/ganci/useMetronomo";
 
 interface ProprietaConfigurazioneMetronomo {
     bpm: number;
     tempoMusicale: TempoMusicale;
+    tipoMetronomo: TipoMetronomo;
+
+    metronomoAvviato: boolean;
+
+    posizionePallinoCorrente: number;
+    posizionePendolo: PosizionePendolo;
 
     diminuisciBpm: () => void;
     aumentaBpm: () => void;
+
     alCambioBpm: (bpm: number) => void;
 
     alCambioTempoMusicale: (
@@ -14,16 +27,22 @@ interface ProprietaConfigurazioneMetronomo {
     ) => void;
 
     alAvvio: () => void;
+    alTermine: () => void;
 }
 
 export default function ConfigurazioneMetronomo({
                                                     bpm,
                                                     tempoMusicale,
+                                                    tipoMetronomo,
+                                                    metronomoAvviato,
+                                                    posizionePallinoCorrente,
+                                                    posizionePendolo,
                                                     diminuisciBpm,
                                                     aumentaBpm,
                                                     alCambioBpm,
                                                     alCambioTempoMusicale,
                                                     alAvvio,
+                                                    alTermine,
                                                 }: ProprietaConfigurazioneMetronomo) {
     return (
         <>
@@ -31,7 +50,8 @@ export default function ConfigurazioneMetronomo({
                 <h2>Metronomo</h2>
 
                 <p>
-                    Imposta velocità e tempo musicale e inizia a suonare.
+                    Imposta velocità e tempo musicale
+                    e inizia a suonare.
                 </p>
             </div>
 
@@ -41,15 +61,50 @@ export default function ConfigurazioneMetronomo({
                 diminuisciBpm={diminuisciBpm}
                 aumentaBpm={aumentaBpm}
                 alCambioBpm={alCambioBpm}
-                alCambioTempoMusicale={alCambioTempoMusicale}
+                alCambioTempoMusicale={
+                    alCambioTempoMusicale
+                }
             />
+
+            <section className="visualizzazione-metronomo">
+                {tipoMetronomo === "digitale" ? (
+                    <IndicatoreTempo
+                        posizionePallinoCorrente={
+                            metronomoAvviato
+                                ? posizionePallinoCorrente
+                                : 0
+                        }
+                        palliniTotali={
+                            tempoMusicale
+                                .suddivisioniPerBattuta
+                        }
+                    />
+                ) : (
+                    <MetronomoMeccanico
+                        bpm={bpm}
+                        posizionePendolo={
+                            posizionePendolo
+                        }
+                    />
+                )}
+            </section>
 
             <button
                 type="button"
-                className="pulsante-avvia"
-                onClick={alAvvio}
+                className={
+                    metronomoAvviato
+                        ? "pulsante-termina-metronomo"
+                        : "pulsante-avvia"
+                }
+                onClick={
+                    metronomoAvviato
+                        ? alTermine
+                        : alAvvio
+                }
             >
-                Avvia metronomo
+                {metronomoAvviato
+                    ? "Ferma metronomo"
+                    : "Avvia metronomo"}
             </button>
         </>
     );

@@ -2,12 +2,18 @@ import { SezioneApplicazione } from "@/tipi/SezioneApplicazione";
 
 interface ProprietaNavigazionePrincipale {
     sezioneAttiva: SezioneApplicazione;
-    alCambioSezione: (sezione: SezioneApplicazione) => void;
+
+    alCambioSezione: (
+        sezione: SezioneApplicazione
+    ) => void;
+
+    alAperturaImpostazioni: () => void;
 }
 
 export default function NavigazionePrincipale({
                                                   sezioneAttiva,
                                                   alCambioSezione,
+                                                  alAperturaImpostazioni,
                                               }: ProprietaNavigazionePrincipale) {
     return (
         <nav className="navigazione-principale">
@@ -18,7 +24,9 @@ export default function NavigazionePrincipale({
                         ? "attivo"
                         : ""
                 }
-                onClick={() => alCambioSezione("esercizio")}
+                onClick={() =>
+                    alCambioSezione("esercizio")
+                }
             >
                 Esercizio accordi
             </button>
@@ -30,9 +38,21 @@ export default function NavigazionePrincipale({
                         ? "attivo"
                         : ""
                 }
-                onClick={() => alCambioSezione("metronomo")}
+                onClick={() =>
+                    alCambioSezione("metronomo")
+                }
             >
                 Metronomo
+            </button>
+
+            <button
+                type="button"
+                className="pulsante-impostazioni"
+                onClick={alAperturaImpostazioni}
+                aria-label="Apri impostazioni"
+                title="Impostazioni"
+            >
+                ⚙
             </button>
         </nav>
     );

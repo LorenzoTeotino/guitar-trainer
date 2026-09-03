@@ -58,32 +58,24 @@ button:not(:disabled) {
 
 .navigazione-principale {
   width: 100%;
-
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 52px;
   gap: 8px;
-
   margin-bottom: 22px;
   padding: 6px;
-
   background: #151b2e;
-
   border: 1px solid #303a55;
   border-radius: 14px;
 }
 
 .navigazione-principale button {
   min-height: 48px;
-
   border: none;
   border-radius: 10px;
-
   background: transparent;
   color: #9da8c7;
-
   font-size: 16px;
   font-weight: 700;
-
   transition:
           background 0.15s ease,
           color 0.15s ease;
@@ -97,6 +89,14 @@ button:not(:disabled) {
 .navigazione-principale button.attivo {
   background: #8b5cf6;
   color: #ffffff;
+}
+
+.navigazione-principale .pulsante-impostazioni {
+  font-size: 22px;
+}
+
+.navigazione-principale .pulsante-impostazioni:hover {
+  background: #29324a;
 }
 
 /* PANNELLI */
@@ -495,6 +495,177 @@ button:not(:disabled) {
   transform: scale(1.2);
 }
 
+/* METRONOMO MECCANICO */
+
+.contenitore-metronomo-meccanico {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 60px;
+}
+
+.metronomo-meccanico {
+  position: relative;
+
+  width: 280px;
+  height: 330px;
+
+  overflow: hidden;
+
+  background: #20283d;
+
+  border: 1px solid #303a55;
+  border-radius: 18px;
+}
+
+.linea-centrale-metronomo {
+  position: absolute;
+
+  left: 50%;
+  bottom: 42px;
+
+  width: 3px;
+  height: 240px;
+
+  background: #3b4665;
+
+  transform: translateX(-50%);
+
+  border-radius: 999px;
+}
+
+.pendolo-metronomo {
+  position: absolute;
+
+  left: 50%;
+  bottom: 42px;
+
+  width: 8px;
+  height: 250px;
+
+  transform-origin: 50% calc(100% - 16px);
+
+  transition-property: transform;
+  transition-timing-function: ease-in-out;
+}
+
+.pendolo-centro {
+  transform:
+          translateX(-50%)
+          rotate(0deg);
+}
+
+.pendolo-sinistra {
+  transform:
+          translateX(-50%)
+          rotate(-30deg);
+}
+
+.pendolo-destra {
+  transform:
+          translateX(-50%)
+          rotate(30deg);
+}
+
+.asta-metronomo {
+  position: absolute;
+
+  left: 50%;
+  bottom: 16px;
+
+  width: 6px;
+  height: 225px;
+
+  background: #9da8c7;
+
+  border-radius: 999px;
+
+  transform: translateX(-50%);
+}
+
+.peso-metronomo {
+  position: absolute;
+
+  left: 50%;
+  top: 82px;
+
+  width: 38px;
+  height: 38px;
+
+  background: #8b5cf6;
+
+  border-radius: 50%;
+
+  transform: translateX(-50%);
+
+  box-shadow:
+          0 4px 14px rgba(139, 92, 246, 0.35);
+}
+
+.perno-metronomo {
+  position: absolute;
+
+  left: 50%;
+  bottom: 0;
+
+  width: 34px;
+  height: 34px;
+
+  background: #e8ecf8;
+
+  border: 5px solid #303a55;
+  border-radius: 50%;
+
+  transform: translateX(-50%);
+
+  z-index: 2;
+}
+
+/* VISUALIZZAZIONE METRONOMO */
+
+.visualizzazione-metronomo {
+  width: 100%;
+  min-height: 180px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 24px 0;
+}
+
+.visualizzazione-metronomo .indicatore-tempo {
+  margin-bottom: 0;
+}
+
+.visualizzazione-metronomo
+.contenitore-metronomo-meccanico {
+  margin-bottom: 0;
+}
+
+/* FERMA METRONOMO */
+
+.pulsante-termina-metronomo {
+  width: 100%;
+
+  border: 1px solid #303a55;
+  border-radius: 14px;
+
+  padding: 18px;
+
+  background: #20283d;
+  color: #ffffff;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  transition: background 0.15s ease;
+}
+
+.pulsante-termina-metronomo:hover {
+  background: #29324a;
+}
+
 /* PRE-CONTEGGIO */
 
 .pre-conteggio-semplice {
@@ -530,6 +701,185 @@ button:not(:disabled) {
 .pulsante-termina:hover {
   background: #29324a;
   border-color: #46516f;
+}
+
+/* IMPOSTAZIONI */
+
+.sfondo-impostazioni {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(5, 8, 18, 0.78);
+  backdrop-filter: blur(6px);
+}
+
+.finestra-impostazioni {
+  width: 100%;
+  max-width: 620px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: #151b2e;
+  border: 1px solid #303a55;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow:
+          0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+.intestazione-impostazioni {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.intestazione-impostazioni h2 {
+  margin-bottom: 6px;
+  font-size: 28px;
+  color: #f3f5ff;
+}
+
+.intestazione-impostazioni p {
+  color: #9da8c7;
+  line-height: 1.5;
+}
+
+.pulsante-chiudi-impostazioni {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border: 1px solid #303a55;
+  border-radius: 10px;
+  background: #20283d;
+  color: #e8ecf8;
+  font-size: 26px;
+  line-height: 1;
+}
+
+.pulsante-chiudi-impostazioni:hover {
+  background: #29324a;
+}
+
+.sezione-impostazioni h3 {
+  margin-bottom: 18px;
+  color: #8b5cf6;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.impostazione {
+  padding: 20px 0;
+  border-top: 1px solid #303a55;
+}
+
+.descrizione-impostazione {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.descrizione-impostazione strong {
+  color: #f3f5ff;
+  font-size: 17px;
+}
+
+.descrizione-impostazione span {
+  color: #9da8c7;
+  font-size: 14px;
+}
+
+.selettore-tipo-metronomo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.selettore-tipo-metronomo button {
+  min-height: 46px;
+  border: 1px solid #303a55;
+  border-radius: 10px;
+  background: #20283d;
+  color: #e8ecf8;
+  font-weight: 700;
+}
+
+.selettore-tipo-metronomo button:hover {
+  background: #29324a;
+}
+
+.selettore-tipo-metronomo button.attivo {
+  background: #8b5cf6;
+  border-color: #8b5cf6;
+  color: #ffffff;
+}
+
+.controllo-suono-metronomo {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.selettore-suono-metronomo {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid #303a55;
+  border-radius: 10px;
+  background: #20283d;
+  color: #f3f5ff;
+  font-size: 15px;
+  font-weight: 700;
+  outline: none;
+}
+
+.selettore-suono-metronomo:hover {
+  background: #29324a;
+}
+
+.selettore-suono-metronomo:focus {
+  border-color: #8b5cf6;
+}
+
+.pulsante-prova-suono {
+  min-width: 90px;
+  border: 1px solid #303a55;
+  border-radius: 10px;
+  background: #20283d;
+  color: #e8ecf8;
+  padding: 0 18px;
+  font-weight: 700;
+}
+
+.pulsante-prova-suono:hover {
+  background: #29324a;
+}
+
+.descrizione-suono {
+  margin-top: 9px;
+  color: #9da8c7;
+  font-size: 13px;
+}
+
+.pulsante-salva-impostazioni {
+  width: 100%;
+  margin-top: 10px;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  background: #8b5cf6;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.pulsante-salva-impostazioni:hover {
+  background: #7c3aed;
 }
 
 /* TABLET E TELEFONO */
@@ -581,5 +931,21 @@ button:not(:disabled) {
 
   .numero-pre-conteggio {
     font-size: clamp(110px, 35vw, 170px);
+  }
+
+  .navigazione-principale {
+    grid-template-columns: 1fr 1fr 48px;
+  }
+
+  .finestra-impostazioni {
+    padding: 20px;
+  }
+
+  .controllo-suono-metronomo {
+    grid-template-columns: 1fr;
+  }
+
+  .pulsante-prova-suono {
+    min-height: 44px;
   }
 }

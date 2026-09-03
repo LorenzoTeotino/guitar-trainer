@@ -8,6 +8,7 @@ import {
 
 import { Accordo } from "@/tipi/Accordo";
 import { TempoMusicale } from "@/tipi/TempoMusicale";
+import { SuonoMetronomo } from "@/tipi/SuonoMetronomo";
 
 import { selezionaAccordoCasuale } from "@/utilita/accordi/selezionaAccordoCasuale";
 
@@ -21,18 +22,29 @@ interface ProprietaUseEsercizioAccordi {
     accordi: Accordo[];
     bpm: number;
     tempoMusicale: TempoMusicale;
+    suonoMetronomoSelezionato: SuonoMetronomo;
 }
 
 export function useEsercizioAccordi({
                                         accordi,
                                         bpm,
                                         tempoMusicale,
+                                        suonoMetronomoSelezionato,
                                     }: ProprietaUseEsercizioAccordi) {
-    const [esercizioAvviato, setEsercizioAvviato] = useState(false);
-    const [preConteggioAttivo, setPreConteggioAttivo] = useState(false);
+    const [
+        esercizioAvviato,
+        setEsercizioAvviato,
+    ] = useState(false);
 
-    const [accordoCorrente, setAccordoCorrente] =
-        useState<Accordo | null>(null);
+    const [
+        preConteggioAttivo,
+        setPreConteggioAttivo,
+    ] = useState(false);
+
+    const [
+        accordoCorrente,
+        setAccordoCorrente,
+    ] = useState<Accordo | null>(null);
 
     const [
         posizionePallinoCorrente,
@@ -47,25 +59,27 @@ export function useEsercizioAccordi({
     const suddivisioniPerBattuta =
         tempoMusicale.suddivisioniPerBattuta;
 
-    const avviaEsercizio = useCallback(async () => {
-        await preparaMetronomo();
+    const avviaEsercizio =
+        useCallback(async () => {
+            await preparaMetronomo();
 
-        setAccordoCorrente(null);
-        setPosizionePallinoCorrente(1);
-        setContoAllaRovescia(3);
+            setAccordoCorrente(null);
+            setPosizionePallinoCorrente(1);
+            setContoAllaRovescia(3);
 
-        setPreConteggioAttivo(true);
-        setEsercizioAvviato(false);
-    }, []);
+            setPreConteggioAttivo(true);
+            setEsercizioAvviato(false);
+        }, []);
 
-    const fermaEsercizio = useCallback(() => {
-        setEsercizioAvviato(false);
-        setPreConteggioAttivo(false);
+    const fermaEsercizio =
+        useCallback(() => {
+            setEsercizioAvviato(false);
+            setPreConteggioAttivo(false);
 
-        setAccordoCorrente(null);
-        setPosizionePallinoCorrente(1);
-        setContoAllaRovescia(3);
-    }, []);
+            setAccordoCorrente(null);
+            setPosizionePallinoCorrente(1);
+            setContoAllaRovescia(3);
+        }, []);
 
     useEffect(() => {
         if (!preConteggioAttivo) {
@@ -75,92 +89,144 @@ export function useEsercizioAccordi({
         const intervalloMetronomo =
             calcolaIntervalloMetronomo(bpm);
 
-        const intervallo = window.setInterval(() => {
-            setContoAllaRovescia((valorePrecedente) => {
-                if (valorePrecedente > 1) {
-                    return valorePrecedente - 1;
-                }
+        const intervallo =
+            window.setInterval(() => {
+                setContoAllaRovescia(
+                    (valorePrecedente) => {
+                        if (
+                            valorePrecedente >
+                            1
+                        ) {
+                            return (
+                                valorePrecedente -
+                                1
+                            );
+                        }
 
-                window.clearInterval(intervallo);
+                        window.clearInterval(
+                            intervallo
+                        );
 
-                setContoAllaRovescia(0);
+                        setContoAllaRovescia(
+                            0
+                        );
 
-                window.setTimeout(() => {
-                    const primoAccordo =
-                        accordi.length > 0
-                            ? selezionaAccordoCasuale(accordi)
-                            : null;
+                        window.setTimeout(
+                            () => {
+                                const primoAccordo =
+                                    accordi.length >
+                                    0
+                                        ? selezionaAccordoCasuale(
+                                            accordi
+                                        )
+                                        : null;
 
-                    setAccordoCorrente(primoAccordo);
+                                setAccordoCorrente(
+                                    primoAccordo
+                                );
 
-                    setPreConteggioAttivo(false);
-                    setEsercizioAvviato(true);
+                                setPreConteggioAttivo(
+                                    false
+                                );
 
-                    setPosizionePallinoCorrente(1);
+                                setEsercizioAvviato(
+                                    true
+                                );
 
-                    suonoMetronomo(true);
-                }, 300);
+                                setPosizionePallinoCorrente(
+                                    1
+                                );
 
-                return 0;
-            });
-        }, intervalloMetronomo);
+                                suonoMetronomo(
+                                    true,
+                                    suonoMetronomoSelezionato
+                                );
+                            },
+                            300
+                        );
+
+                        return 0;
+                    }
+                );
+            }, intervalloMetronomo);
 
         return () => {
-            window.clearInterval(intervallo);
+            window.clearInterval(
+                intervallo
+            );
         };
     }, [
         preConteggioAttivo,
         bpm,
         accordi,
+        suonoMetronomoSelezionato,
     ]);
 
     useEffect(() => {
-        if (!esercizioAvviato || preConteggioAttivo) {
+        if (
+            !esercizioAvviato ||
+            preConteggioAttivo
+        ) {
             return;
         }
 
         const intervalloMetronomo =
             calcolaIntervalloMetronomo(bpm);
 
-        const intervallo = window.setInterval(() => {
-            setPosizionePallinoCorrente(
-                (posizionePrecedente) => {
-                    if (
-                        posizionePrecedente >=
-                        suddivisioniPerBattuta
-                    ) {
-                        if (accordi.length > 0) {
-                            setAccordoCorrente(
-                                (accordoPrecedente) =>
-                                    selezionaAccordoCasuale(
-                                        accordi,
+        const intervallo =
+            window.setInterval(() => {
+                setPosizionePallinoCorrente(
+                    (posizionePrecedente) => {
+                        if (
+                            posizionePrecedente >=
+                            suddivisioniPerBattuta
+                        ) {
+                            if (
+                                accordi.length >
+                                0
+                            ) {
+                                setAccordoCorrente(
+                                    (
                                         accordoPrecedente
-                                    )
+                                    ) =>
+                                        selezionaAccordoCasuale(
+                                            accordi,
+                                            accordoPrecedente
+                                        )
+                                );
+                            }
+
+                            suonoMetronomo(
+                                true,
+                                suonoMetronomoSelezionato
                             );
+
+                            return 1;
                         }
 
-                        suonoMetronomo(true);
+                        const nuovaPosizione =
+                            posizionePrecedente +
+                            1;
 
-                        return 1;
-                    }
+                        const accentato =
+                            tempoMusicale.accenti.includes(
+                                nuovaPosizione
+                            );
 
-                    const nuovaPosizione =
-                        posizionePrecedente + 1;
-
-                    const accentato =
-                        tempoMusicale.accenti.includes(
-                            nuovaPosizione
+                        suonoMetronomo(
+                            accentato,
+                            suonoMetronomoSelezionato
                         );
 
-                    suonoMetronomo(accentato);
-
-                    return nuovaPosizione;
-                }
-            );
-        }, intervalloMetronomo);
+                        return nuovaPosizione;
+                    }
+                );
+            }, intervalloMetronomo);
 
         return () => {
-            window.clearInterval(intervallo);
+            window.clearInterval(
+                intervallo
+            );
         };
     }, [
         esercizioAvviato,
@@ -169,6 +235,7 @@ export function useEsercizioAccordi({
         suddivisioniPerBattuta,
         accordi,
         tempoMusicale.accenti,
+        suonoMetronomoSelezionato,
     ]);
 
     return {

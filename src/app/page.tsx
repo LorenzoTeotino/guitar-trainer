@@ -19,6 +19,11 @@ import { TEMPO_QUATTRO_QUARTI } from "@/dati/tempi/tempiDisponibili";
 
 import { useEsercizioAccordi } from "@/ganci/useEsercizioAccordi";
 
+import FinestraImpostazioni from "@/componenti/impostazioni/FinestraImpostazioni";
+import { useImpostazioniApplicazione } from "@/ganci/useImpostazioniApplicazione";
+
+import { useMetronomo } from "@/ganci/useMetronomo";
+
 import { LinguaAccordi } from "@/tipi/LinguaAccordi";
 import { SezioneApplicazione } from "@/tipi/SezioneApplicazione";
 import { TempoMusicale } from "@/tipi/TempoMusicale";
@@ -42,6 +47,31 @@ export default function PaginaPrincipale() {
       useState<SezioneApplicazione>(
           "esercizio"
       );
+
+  const [
+    impostazioniAperte,
+    setImpostazioniAperte,
+  ] = useState(false);
+
+  const {
+    impostazioni,
+    cambiaTipoMetronomo,
+    cambiaSuonoMetronomo,
+  } = useImpostazioniApplicazione();
+
+  const {
+    metronomoAvviato,
+    posizionePallinoCorrente:
+        posizionePallinoMetronomo,
+    posizionePendolo,
+    avviaMetronomo,
+    fermaMetronomo,
+  } = useMetronomo({
+    bpm,
+    tempoMusicale,
+    suonoMetronomoSelezionato:
+    impostazioni.suonoMetronomo,
+  });
 
   const accordiAttivi = useMemo(() => {
     return accordiDisponibili.filter(
@@ -67,6 +97,8 @@ export default function PaginaPrincipale() {
             : [],
     bpm,
     tempoMusicale,
+    suonoMetronomoSelezionato:
+    impostazioni.suonoMetronomo,
   });
 
   const cambiaSelezioneAccordo = (
@@ -136,24 +168,17 @@ export default function PaginaPrincipale() {
     return (
         <main className="pagina">
           <SchermataEsercizio
-              accordoCorrente={
-                accordoCorrente
-              }
+              accordoCorrente={accordoCorrente}
               lingua={lingua}
               posizionePallinoCorrente={
                 posizionePallinoCorrente
               }
               palliniTotali={
-                tempoMusicale
-                    .suddivisioniPerBattuta
+                tempoMusicale.suddivisioniPerBattuta
               }
-              tempoMusicale={
-                tempoMusicale
-              }
+              tempoMusicale={tempoMusicale}
               bpm={bpm}
-              alTermine={
-                fermaEsercizio
-              }
+              alTermine={fermaEsercizio}
           />
         </main>
     );
@@ -175,11 +200,10 @@ export default function PaginaPrincipale() {
           </header>
 
           <NavigazionePrincipale
-              sezioneAttiva={
-                sezioneAttiva
-              }
-              alCambioSezione={
-                setSezioneAttiva
+              sezioneAttiva={sezioneAttiva}
+              alCambioSezione={setSezioneAttiva}
+              alAperturaImpostazioni={() =>
+                  setImpostazioniAperte(true)
               }
           />
 
@@ -292,31 +316,62 @@ export default function PaginaPrincipale() {
                         )}
                   </>
               )}
+          {sezioneAttiva === "metronomo" && (
+              <ConfigurazioneMetronomo
+                  bpm={bpm}
+                  tempoMusicale={tempoMusicale}
+                  tipoMetronomo={
+                    impostazioni.tipoMetronomo
+                  }
+                  metronomoAvviato={
+                    metronomoAvviato
+                  }
+                  posizionePallinoCorrente={
+                    posizionePallinoMetronomo
+                  }
+                  posizionePendolo={
+                    posizionePendolo
+                  }
+                  diminuisciBpm={
+                    diminuisciBpm
+                  }
+                  aumentaBpm={
+                    aumentaBpm
+                  }
+                  alCambioBpm={
+                    setBpm
+                  }
+                  alCambioTempoMusicale={
+                    setTempoMusicale
+                  }
+                  alAvvio={
+                    avviaMetronomo
+                  }
+                  alTermine={
+                    fermaMetronomo
+                  }
+              />
+          )}
 
-          {sezioneAttiva ===
-              "metronomo" && (
-                  <ConfigurazioneMetronomo
-                      bpm={bpm}
-                      tempoMusicale={
-                        tempoMusicale
-                      }
-                      diminuisciBpm={
-                        diminuisciBpm
-                      }
-                      aumentaBpm={
-                        aumentaBpm
-                      }
-                      alCambioBpm={
-                        setBpm
-                      }
-                      alCambioTempoMusicale={
-                        setTempoMusicale
-                      }
-                      alAvvio={
-                        avviaEsercizio
-                      }
-                  />
-              )}
+          {impostazioniAperte && (
+              <FinestraImpostazioni
+                  tipoMetronomo={
+                    impostazioni.tipoMetronomo
+                  }
+                  suonoMetronomoSelezionato={
+                    impostazioni.suonoMetronomo
+                  }
+                  alCambioTipoMetronomo={
+                    cambiaTipoMetronomo
+                  }
+                  alCambioSuonoMetronomo={
+                    cambiaSuonoMetronomo
+                  }
+                  allaChiusura={() =>
+                      setImpostazioniAperte(false)
+                  }
+              />
+          )}
         </div>
       </main>
   );

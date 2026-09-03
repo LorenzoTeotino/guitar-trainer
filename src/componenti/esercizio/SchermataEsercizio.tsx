@@ -8,13 +8,10 @@ import IndicatoreTempo from "@/componenti/esercizio/IndicatoreTempo";
 interface ProprietaSchermataEsercizio {
     accordoCorrente: Accordo | null;
     lingua: LinguaAccordi;
-
     posizionePallinoCorrente: number;
     palliniTotali: number;
-
     tempoMusicale: TempoMusicale;
     bpm: number;
-
     alTermine: () => void;
 }
 
@@ -27,16 +24,17 @@ export default function SchermataEsercizio({
                                                bpm,
                                                alTermine,
                                            }: ProprietaSchermataEsercizio) {
-    const soloMetronomo = accordoCorrente === null;
-
     return (
         <section className="schermata-esercizio">
             <div className="barra-esercizio">
                 <span>{bpm} BPM</span>
-                <span>{tempoMusicale.nome}</span>
+
+                <span>
+                    {tempoMusicale.nome}
+                </span>
             </div>
 
-            {!soloMetronomo && (
+            {accordoCorrente && (
                 <VisualizzatoreAccordo
                     accordo={accordoCorrente}
                     lingua={lingua}
@@ -47,7 +45,9 @@ export default function SchermataEsercizio({
                 posizionePallinoCorrente={
                     posizionePallinoCorrente
                 }
-                palliniTotali={palliniTotali}
+                palliniTotali={
+                    palliniTotali
+                }
             />
 
             <button
@@ -55,9 +55,7 @@ export default function SchermataEsercizio({
                 className="pulsante-termina"
                 onClick={alTermine}
             >
-                {soloMetronomo
-                    ? "Termina metronomo"
-                    : "Termina esercizio"}
+                Termina esercizio
             </button>
         </section>
     );
