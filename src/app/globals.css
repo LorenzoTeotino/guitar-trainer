@@ -192,32 +192,55 @@ button:not(:disabled) {
   color: #f3f5ff;
 }
 
+.controllo-bpm {
+  width: 200px;
+}
+
 .pulsante-contatore {
+  width: 100%;
+
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
 }
 
 .pulsante-contatore button {
   width: 44px;
   height: 44px;
+
   border: 1px solid #303a55;
   background: #20283d;
   color: #e8ecf8;
+
   border-radius: 10px;
+
   font-size: 22px;
+
   transition: background 0.15s ease;
 }
 
-.pulsante-contatore button:hover {
+.pulsante-contatore button:hover:not(:disabled) {
   background: #29324a;
 }
 
 .pulsante-contatore strong {
   min-width: 60px;
+
   text-align: center;
+
   font-size: 22px;
+
   color: #f3f5ff;
+}
+
+.slider-bpm {
+  display: block;
+  width: 100%;
+
+  margin-top: 24px;
+
+  accent-color: #8b5cf6;
+  cursor: pointer;
 }
 
 .selettore-tempo {
@@ -285,7 +308,7 @@ button:not(:disabled) {
 
 .schermata-esercizio {
   width: 100%;
-  max-width: 800px;
+  max-width: 920px;
   min-height: calc(100vh - 64px);
   margin: 0 auto;
 
@@ -344,7 +367,7 @@ button:not(:disabled) {
 .indicatore-tempo {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 14px;
   margin-bottom: 60px;
 }
@@ -382,11 +405,9 @@ button:not(:disabled) {
 
 .pre-conteggio-semplice {
   width: 100%;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   margin-bottom: 80px;
 }
 
@@ -456,6 +477,7 @@ button:not(:disabled) {
   }
 
   .indicatore-tempo {
+    flex-wrap: wrap;
     margin-bottom: 45px;
   }
 

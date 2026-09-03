@@ -1,7 +1,12 @@
 export type IdentificativoTempoMusicale =
-    | "4/4"
+    | "2/4"
     | "3/4"
-    | "6/8";
+    | "4/4"
+    | "5/4"
+    | "6/8"
+    | "7/8"
+    | "9/8"
+    | "12/8";
 
 export interface TempoMusicale {
     id: IdentificativoTempoMusicale;

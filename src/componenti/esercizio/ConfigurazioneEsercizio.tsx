@@ -5,8 +5,11 @@ import { TEMPI_DISPONIBILI } from "@/dati/tempi/tempiDisponibili";
 interface ProprietaConfigurazioneEsercizio {
     bpm: number;
     tempoMusicale: TempoMusicale;
+
     diminuisciBpm: () => void;
     aumentaBpm: () => void;
+    alCambioBpm: (bpm: number) => void;
+
     alCambioTempoMusicale: (tempo: TempoMusicale) => void;
 }
 
@@ -15,6 +18,7 @@ export default function ConfigurazioneEsercizio({
                                                     tempoMusicale,
                                                     diminuisciBpm,
                                                     aumentaBpm,
+                                                    alCambioBpm,
                                                     alCambioTempoMusicale,
                                                 }: ProprietaConfigurazioneEsercizio) {
     const cambiaTempoMusicale = (
@@ -37,8 +41,11 @@ export default function ConfigurazioneEsercizio({
 
                     <PulsanteContatore
                         valore={bpm}
+                        valoreMinimo={30}
+                        valoreMassimo={300}
                         diminuisci={diminuisciBpm}
                         aumenta={aumentaBpm}
+                        alCambioValore={alCambioBpm}
                     />
                 </div>
 

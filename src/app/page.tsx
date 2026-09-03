@@ -172,14 +172,13 @@ export default function PaginaPrincipale() {
               bpm={bpm}
               tempoMusicale={tempoMusicale}
               diminuisciBpm={() =>
-                  setBpm((valore) => valore - 1)
+                  setBpm((valore) => Math.max(30, valore - 1))
               }
               aumentaBpm={() =>
-                  setBpm((valore) => valore + 1)
+                  setBpm((valore) => Math.min(300, valore + 1))
               }
-              alCambioTempoMusicale={
-                setTempoMusicale
-              }
+              alCambioBpm={setBpm}
+              alCambioTempoMusicale={setTempoMusicale}
           />
 
           <button
