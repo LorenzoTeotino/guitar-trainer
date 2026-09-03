@@ -1,13 +1,14 @@
 import { Accordo } from "@/tipi/Accordo";
 import { LinguaAccordi } from "@/tipi/LinguaAccordi";
+
 import VisualizzatoreAccordo from "@/componenti/esercizio/VisualizzatoreAccordo";
-import ContatoreBattiti from "@/componenti/esercizio/ContatoreBattiti";
+import IndicatoreTempo from "@/componenti/esercizio/IndicatoreTempo";
 
 interface ProprietaSchermataEsercizio {
     accordoCorrente: Accordo;
     lingua: LinguaAccordi;
-    battitoCorrente: number;
-    battitiPerAccordo: number;
+    posizionePallinoCorrente: number;
+    palliniTotali: number;
     bpm: number;
     alTermine: () => void;
 }
@@ -15,8 +16,8 @@ interface ProprietaSchermataEsercizio {
 export default function SchermataEsercizio({
                                                accordoCorrente,
                                                lingua,
-                                               battitoCorrente,
-                                               battitiPerAccordo,
+                                               posizionePallinoCorrente,
+                                               palliniTotali,
                                                bpm,
                                                alTermine,
                                            }: ProprietaSchermataEsercizio) {
@@ -24,10 +25,6 @@ export default function SchermataEsercizio({
         <section className="schermata-esercizio">
             <div className="barra-esercizio">
                 <span>{bpm} BPM</span>
-
-                <span>
-          {battitiPerAccordo} battiti
-        </span>
             </div>
 
             <VisualizzatoreAccordo
@@ -35,9 +32,9 @@ export default function SchermataEsercizio({
                 lingua={lingua}
             />
 
-            <ContatoreBattiti
-                battitoCorrente={battitoCorrente}
-                battitiTotali={battitiPerAccordo}
+            <IndicatoreTempo
+                posizionePallinoCorrente={posizionePallinoCorrente}
+                palliniTotali={palliniTotali}
             />
 
             <button

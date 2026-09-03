@@ -12,7 +12,7 @@ function recuperaContestoAudio(): AudioContext {
     return contestoAudio;
 }
 
-export function calcolaMillisecondiPerBattito(
+export function calcolaIntervalloMetronomo(
     bpm: number
 ): number {
     return 60000 / bpm;
@@ -26,7 +26,7 @@ export async function preparaMetronomo(): Promise<void> {
     }
 }
 
-export function riproduciBattito(
+export function suonoMetronomo(
     accentato: boolean
 ): void {
     const contesto = recuperaContestoAudio();

@@ -7,24 +7,26 @@ import {
 } from "react";
 
 import { Accordo } from "@/tipi/Accordo";
+import { TempoMusicale } from "@/tipi/TempoMusicale";
 
 import { selezionaAccordoCasuale } from "@/utilita/accordi/selezionaAccordoCasuale";
 
 import {
-    calcolaMillisecondiPerBattito,
-    riproduciBattito,
+    calcolaIntervalloMetronomo,
+    preparaMetronomo,
+    suonoMetronomo,
 } from "@/servizi/metronomo/servizioMetronomo";
 
 interface ProprietaUseEsercizioAccordi {
     accordi: Accordo[];
     bpm: number;
-    battitiPerAccordo: number;
+    tempoMusicale: TempoMusicale;
 }
 
 export function useEsercizioAccordi({
                                         accordi,
                                         bpm,
-                                        battitiPerAccordo,
+                                        tempoMusicale,
                                     }: ProprietaUseEsercizioAccordi) {
     const [esercizioAvviato, setEsercizioAvviato] =
         useState(false);
@@ -35,20 +37,26 @@ export function useEsercizioAccordi({
     const [accordoCorrente, setAccordoCorrente] =
         useState<Accordo | null>(null);
 
-    const [battitoCorrente, setBattitoCorrente] =
-        useState(1);
+    const [
+        posizionePallinoCorrente,
+        setPosizionePallinoCorrente,
+    ] = useState(1);
 
-    const [battitoPreConteggio, setBattitoPreConteggio] =
-        useState(3);
+    const [
+        contoAllaRovescia,
+        setContoAllaRovescia,
+    ] = useState(3);
 
-    const avviaEsercizio = useCallback(() => {
+    const avviaEsercizio = useCallback(async() => {
         if (accordi.length === 0) {
             return;
         }
 
+        await preparaMetronomo();
+
         setAccordoCorrente(null);
-        setBattitoCorrente(1);
-        setBattitoPreConteggio(3);
+        setPosizionePallinoCorrente(1);
+        setContoAllaRovescia(3);
 
         setPreConteggioAttivo(true);
         setEsercizioAvviato(false);
@@ -60,8 +68,8 @@ export function useEsercizioAccordi({
 
         setAccordoCorrente(null);
 
-        setBattitoCorrente(1);
-        setBattitoPreConteggio(3);
+        setPosizionePallinoCorrente(1);
+        setContoAllaRovescia(3);
     }, []);
 
     useEffect(() => {
@@ -69,11 +77,11 @@ export function useEsercizioAccordi({
             return;
         }
 
-        const millisecondiPerBattito =
-            calcolaMillisecondiPerBattito(bpm);
+        const intervalloMetronomo =
+            calcolaIntervalloMetronomo(bpm);
 
         const intervallo = window.setInterval(() => {
-            setBattitoPreConteggio((valorePrecedente) => {
+            setContoAllaRovescia((valorePrecedente) => {
                 if (valorePrecedente > 1) {
                     return valorePrecedente - 1;
                 }
@@ -83,20 +91,22 @@ export function useEsercizioAccordi({
                 const primoAccordo =
                     selezionaAccordoCasuale(accordi);
 
-                setBattitoPreConteggio(0);
+                setContoAllaRovescia(0);
 
                 window.setTimeout(() => {
                     setAccordoCorrente(primoAccordo);
+
                     setPreConteggioAttivo(false);
                     setEsercizioAvviato(true);
-                    setBattitoCorrente(1);
 
-                    riproduciBattito(true);
+                    setPosizionePallinoCorrente(1);
+
+                    suonoMetronomo(true);
                 }, 300);
 
                 return 0;
             });
-        }, millisecondiPerBattito);
+        }, intervalloMetronomo);
 
         return () => {
             window.clearInterval(intervallo);
@@ -115,14 +125,15 @@ export function useEsercizioAccordi({
             return;
         }
 
-        const millisecondiPerBattito =
-            calcolaMillisecondiPerBattito(bpm);
+        const intervalloMetronomo =
+            calcolaIntervalloMetronomo(bpm);
 
         const intervallo = window.setInterval(() => {
-            setBattitoCorrente(
-                (battitoPrecedente) => {
+            setPosizionePallinoCorrente(
+                (posizionePrecedente) => {
                     if (
-                        battitoPrecedente >= battitiPerAccordo
+                        posizionePrecedente >=
+                        tempoMusicale.suddivisioniPerBattuta
                     ) {
                         setAccordoCorrente(
                             (accordoPrecedente) =>
@@ -132,20 +143,20 @@ export function useEsercizioAccordi({
                                 )
                         );
 
-                        riproduciBattito(true);
+                        suonoMetronomo(true);
 
                         return 1;
                     }
 
-                    const nuovoBattito =
-                        battitoPrecedente + 1;
+                    const nuovaPosizione =
+                        posizionePrecedente + 1;
 
-                    riproduciBattito(false);
+                    suonoMetronomo(false);
 
-                    return nuovoBattito;
+                    return nuovaPosizione;
                 }
             );
-        }, millisecondiPerBattito);
+        }, intervalloMetronomo);
 
         return () => {
             window.clearInterval(intervallo);
@@ -154,7 +165,7 @@ export function useEsercizioAccordi({
         esercizioAvviato,
         preConteggioAttivo,
         bpm,
-        battitiPerAccordo,
+        tempoMusicale,
         accordi,
     ]);
 
@@ -162,8 +173,8 @@ export function useEsercizioAccordi({
         esercizioAvviato,
         preConteggioAttivo,
         accordoCorrente,
-        battitoCorrente,
-        battitoPreConteggio,
+        posizionePallinoCorrente,
+        contoAllaRovescia,
         avviaEsercizio,
         fermaEsercizio,
     };

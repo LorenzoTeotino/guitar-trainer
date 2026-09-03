@@ -9,13 +9,13 @@ import SchermataEsercizio from "@/componenti/esercizio/SchermataEsercizio";
 import PreConteggio from "@/componenti/esercizio/PreConteggio";
 
 import { accordiDisponibili } from "@/dati/accordi/accordiDisponibili";
+import { TEMPO_QUATTRO_QUARTI } from "@/dati/tempi/tempiDisponibili";
 
-import {
-  BATTITI_PREDEFINITI,
-  BPM_PREDEFINITI,
-} from "@/costanti/configurazioneEsercizio";
+import { BPM_PREDEFINITI } from "@/costanti/configurazioneEsercizio";
 
 import { LinguaAccordi } from "@/tipi/LinguaAccordi";
+import { TempoMusicale } from "@/tipi/TempoMusicale";
+
 import { useEsercizioAccordi } from "@/ganci/useEsercizioAccordi";
 
 export default function PaginaPrincipale() {
@@ -28,8 +28,8 @@ export default function PaginaPrincipale() {
   const [bpm, setBpm] =
       useState(BPM_PREDEFINITI);
 
-  const [battitiPerAccordo, setBattitiPerAccordo] =
-      useState(BATTITI_PREDEFINITI);
+  const [tempoMusicale, setTempoMusicale] =
+      useState<TempoMusicale>(TEMPO_QUATTRO_QUARTI);
 
   const accordiAttivi = useMemo(() => {
     return accordiDisponibili.filter((accordo) =>
@@ -41,14 +41,14 @@ export default function PaginaPrincipale() {
     esercizioAvviato,
     preConteggioAttivo,
     accordoCorrente,
-    battitoCorrente,
-    battitoPreConteggio,
+    posizionePallinoCorrente,
+    contoAllaRovescia,
     avviaEsercizio,
     fermaEsercizio,
   } = useEsercizioAccordi({
     accordi: accordiAttivi,
     bpm,
-    battitiPerAccordo,
+    tempoMusicale,
   });
 
   const cambiaSelezioneAccordo = (
@@ -79,7 +79,7 @@ export default function PaginaPrincipale() {
     return (
         <main className="pagina">
           <PreConteggio
-              battitoCorrente={battitoPreConteggio}
+              contoAllaRovescia={contoAllaRovescia}
               alTermine={fermaEsercizio}
           />
         </main>
@@ -95,8 +95,12 @@ export default function PaginaPrincipale() {
           <SchermataEsercizio
               accordoCorrente={accordoCorrente}
               lingua={lingua}
-              battitoCorrente={battitoCorrente}
-              battitiPerAccordo={battitiPerAccordo}
+              posizionePallinoCorrente={
+                posizionePallinoCorrente
+              }
+              palliniTotali={
+                tempoMusicale.suddivisioniPerBattuta
+              }
               bpm={bpm}
               alTermine={fermaEsercizio}
           />
@@ -109,6 +113,7 @@ export default function PaginaPrincipale() {
         <div className="contenitore-principale">
           <header className="intestazione">
             <h1>Guitar Trainer</h1>
+
             <p>
               Seleziona gli accordi che vuoi
               esercitare e allenati a cambiarli
@@ -163,18 +168,19 @@ export default function PaginaPrincipale() {
             />
           </section>
 
-          <section className="pannello">
-            <ConfigurazioneEsercizio
-                bpm={bpm}
-                battitiPerAccordo={
-                  battitiPerAccordo
-                }
-                alCambioBpm={setBpm}
-                alCambioBattiti={
-                  setBattitiPerAccordo
-                }
-            />
-          </section>
+          <ConfigurazioneEsercizio
+              bpm={bpm}
+              tempoMusicale={tempoMusicale}
+              diminuisciBpm={() =>
+                  setBpm((valore) => valore - 1)
+              }
+              aumentaBpm={() =>
+                  setBpm((valore) => valore + 1)
+              }
+              alCambioTempoMusicale={
+                setTempoMusicale
+              }
+          />
 
           <button
               type="button"

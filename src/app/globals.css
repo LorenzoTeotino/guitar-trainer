@@ -308,9 +308,9 @@ button:not(:disabled) {
   color: #f3f5ff;
 }
 
-/* BATTITI */
+/* INDICATORE TEMPO */
 
-.contatore-battiti {
+.indicatore-tempo {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
@@ -318,7 +318,7 @@ button:not(:disabled) {
   margin-bottom: 60px;
 }
 
-.contatore-battiti span {
+.indicatore-tempo span {
   width: 52px;
   height: 52px;
 
@@ -340,7 +340,7 @@ button:not(:disabled) {
           border-color 0.15s ease;
 }
 
-.contatore-battiti .battito-attivo {
+.indicatore-tempo .pallino-attivo {
   background: #8b5cf6;
   border-color: #8b5cf6;
   color: #ffffff;
@@ -424,7 +424,7 @@ button:not(:disabled) {
     margin-bottom: 45px;
   }
 
-  .contatore-battiti {
+  .indicatore-tempo {
     margin-bottom: 45px;
   }
 
