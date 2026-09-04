@@ -17,6 +17,8 @@ interface ProprietaConfigurazioneMetronomo {
     diminuisciBpm: () => void;
     aumentaBpm: () => void;
 
+    istanteAvvioMetronomo: number | null;
+
     alCambioBpm: (bpm: number) => void;
 
     alCambioTempoMusicale: (
@@ -35,6 +37,7 @@ export default function ConfigurazioneMetronomo({
                                                     posizionePallinoCorrente,
                                                     diminuisciBpm,
                                                     aumentaBpm,
+                                                    istanteAvvioMetronomo,
                                                     alCambioBpm,
                                                     alCambioTempoMusicale,
                                                     alAvvio,
@@ -78,8 +81,9 @@ export default function ConfigurazioneMetronomo({
                 ) : (
                     <MetronomoMeccanico
                         bpm={bpm}
-                        metronomoAvviato={
-                            metronomoAvviato
+                        metronomoAvviato={metronomoAvviato}
+                        istanteAvvioMetronomo={
+                            istanteAvvioMetronomo
                         }
                     />
                 )}

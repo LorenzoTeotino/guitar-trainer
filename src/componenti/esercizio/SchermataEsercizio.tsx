@@ -1,17 +1,27 @@
 import { Accordo } from "@/tipi/Accordo";
 import { LinguaAccordi } from "@/tipi/LinguaAccordi";
 import { TempoMusicale } from "@/tipi/TempoMusicale";
+import { TipoMetronomo } from "@/tipi/TipoMetronomo";
 
 import VisualizzatoreAccordo from "@/componenti/esercizio/VisualizzatoreAccordo";
 import IndicatoreTempo from "@/componenti/esercizio/IndicatoreTempo";
+import MetronomoMeccanico from "@/componenti/metronomo/MetronomoMeccanico";
 
 interface ProprietaSchermataEsercizio {
     accordoCorrente: Accordo | null;
     lingua: LinguaAccordi;
+
     posizionePallinoCorrente: number;
     palliniTotali: number;
+
     tempoMusicale: TempoMusicale;
     bpm: number;
+
+    tipoMetronomo: TipoMetronomo;
+
+    esercizioAvviato: boolean;
+    istanteAvvioMetronomo: number | null;
+
     alTermine: () => void;
 }
 
@@ -22,6 +32,9 @@ export default function SchermataEsercizio({
                                                palliniTotali,
                                                tempoMusicale,
                                                bpm,
+                                               tipoMetronomo,
+                                               esercizioAvviato,
+                                               istanteAvvioMetronomo,
                                                alTermine,
                                            }: ProprietaSchermataEsercizio) {
     return (
@@ -41,14 +54,26 @@ export default function SchermataEsercizio({
                 />
             )}
 
-            <IndicatoreTempo
-                posizionePallinoCorrente={
-                    posizionePallinoCorrente
-                }
-                palliniTotali={
-                    palliniTotali
-                }
-            />
+            {tipoMetronomo === "digitale" ? (
+                <IndicatoreTempo
+                    posizionePallinoCorrente={
+                        posizionePallinoCorrente
+                    }
+                    palliniTotali={
+                        palliniTotali
+                    }
+                />
+            ) : (
+                <MetronomoMeccanico
+                    bpm={bpm}
+                    metronomoAvviato={
+                        esercizioAvviato
+                    }
+                    istanteAvvioMetronomo={
+                        istanteAvvioMetronomo
+                    }
+                />
+            )}
 
             <button
                 type="button"

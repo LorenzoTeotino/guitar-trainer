@@ -59,18 +59,19 @@ export default function PaginaPrincipale() {
     cambiaSuonoMetronomo,
   } = useImpostazioniApplicazione();
 
-  const {
-    metronomoAvviato,
-    posizionePallinoCorrente:
-        posizionePallinoMetronomo,
-    avviaMetronomo,
-    fermaMetronomo,
-  } = useMetronomo({
-    bpm,
-    tempoMusicale,
-    suonoMetronomoSelezionato:
-    impostazioni.suonoMetronomo,
-  });
+    const {
+        metronomoAvviato,
+        posizionePallinoCorrente:
+            posizionePallinoMetronomo,
+        istanteAvvioMetronomo,
+        avviaMetronomo,
+        fermaMetronomo,
+    } = useMetronomo({
+        bpm,
+        tempoMusicale,
+        suonoMetronomoSelezionato:
+        impostazioni.suonoMetronomo,
+    });
 
   const accordiAttivi = useMemo(() => {
     return accordiDisponibili.filter(
@@ -81,24 +82,26 @@ export default function PaginaPrincipale() {
     );
   }, [accordiSelezionati]);
 
-  const {
-    esercizioAvviato,
-    preConteggioAttivo,
-    accordoCorrente,
-    posizionePallinoCorrente,
-    contoAllaRovescia,
-    avviaEsercizio,
-    fermaEsercizio,
-  } = useEsercizioAccordi({
-    accordi:
-        sezioneAttiva === "esercizio"
-            ? accordiAttivi
-            : [],
-    bpm,
-    tempoMusicale,
-    suonoMetronomoSelezionato:
-    impostazioni.suonoMetronomo,
-  });
+    const {
+        esercizioAvviato,
+        preConteggioAttivo,
+        accordoCorrente,
+        posizionePallinoCorrente,
+        contoAllaRovescia,
+        istanteAvvioMetronomo:
+            istanteAvvioMetronomoEsercizio,
+        avviaEsercizio,
+        fermaEsercizio,
+    } = useEsercizioAccordi({
+        accordi:
+            sezioneAttiva === "esercizio"
+                ? accordiAttivi
+                : [],
+        bpm,
+        tempoMusicale,
+        suonoMetronomoSelezionato:
+        impostazioni.suonoMetronomo,
+    });
 
   const cambiaSelezioneAccordo = (
       idAccordo: string
@@ -166,22 +169,49 @@ export default function PaginaPrincipale() {
   if (esercizioAvviato) {
     return (
         <main className="pagina">
-          <SchermataEsercizio
-              accordoCorrente={accordoCorrente}
-              lingua={lingua}
-              posizionePallinoCorrente={
-                posizionePallinoCorrente
-              }
-              palliniTotali={
-                tempoMusicale.suddivisioniPerBattuta
-              }
-              tempoMusicale={tempoMusicale}
-              bpm={bpm}
-              alTermine={fermaEsercizio}
-          />
+            <SchermataEsercizio
+                accordoCorrente={accordoCorrente}
+                lingua={lingua}
+                posizionePallinoCorrente={
+                    posizionePallinoCorrente
+                }
+                palliniTotali={
+                    tempoMusicale.suddivisioniPerBattuta
+                }
+                tempoMusicale={tempoMusicale}
+                bpm={bpm}
+                tipoMetronomo={
+                    impostazioni.tipoMetronomo
+                }
+                esercizioAvviato={
+                    esercizioAvviato
+                }
+                istanteAvvioMetronomo={
+                    istanteAvvioMetronomoEsercizio
+                }
+                alTermine={fermaEsercizio}
+            />
         </main>
     );
   }
+
+    const cambiaSezione = (
+        nuovaSezione: SezioneApplicazione
+    ) => {
+        if (metronomoAvviato) {
+            fermaMetronomo();
+        }
+
+        setSezioneAttiva(nuovaSezione);
+    };
+
+    const apriImpostazioni = () => {
+        if (metronomoAvviato) {
+            fermaMetronomo();
+        }
+
+        setImpostazioniAperte(true);
+    };
 
   return (
       <main className="pagina">
@@ -198,13 +228,11 @@ export default function PaginaPrincipale() {
             </p>
           </header>
 
-          <NavigazionePrincipale
-              sezioneAttiva={sezioneAttiva}
-              alCambioSezione={setSezioneAttiva}
-              alAperturaImpostazioni={() =>
-                  setImpostazioniAperte(true)
-              }
-          />
+            <NavigazionePrincipale
+                sezioneAttiva={sezioneAttiva}
+                alCambioSezione={cambiaSezione}
+                alAperturaImpostazioni={apriImpostazioni}
+            />
 
           {sezioneAttiva ===
               "esercizio" && (
@@ -327,6 +355,9 @@ export default function PaginaPrincipale() {
                   }
                   posizionePallinoCorrente={
                     posizionePallinoMetronomo
+                  }
+                  istanteAvvioMetronomo={
+                      istanteAvvioMetronomo
                   }
                   diminuisciBpm={
                     diminuisciBpm

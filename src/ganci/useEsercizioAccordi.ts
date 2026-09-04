@@ -3,6 +3,7 @@
 import {
     useCallback,
     useEffect,
+    useRef,
     useState,
 } from "react";
 
@@ -56,8 +57,13 @@ export function useEsercizioAccordi({
         setContoAllaRovescia,
     ] = useState(3);
 
-    const suddivisioniPerBattuta =
-        tempoMusicale.suddivisioniPerBattuta;
+    const [
+        istanteAvvioMetronomo,
+        setIstanteAvvioMetronomo,
+    ] = useState<number | null>(null);
+
+    const riferimentoTimerMetronomo =
+        useRef<number | null>(null);
 
     const avviaEsercizio =
         useCallback(async () => {
@@ -67,20 +73,43 @@ export function useEsercizioAccordi({
             setPosizionePallinoCorrente(1);
             setContoAllaRovescia(3);
 
+            setIstanteAvvioMetronomo(null);
+
             setPreConteggioAttivo(true);
             setEsercizioAvviato(false);
         }, []);
 
     const fermaEsercizio =
         useCallback(() => {
+            if (
+                riferimentoTimerMetronomo.current !== null
+            ) {
+                window.clearTimeout(
+                    riferimentoTimerMetronomo.current
+                );
+
+                riferimentoTimerMetronomo.current =
+                    null;
+            }
+
             setEsercizioAvviato(false);
             setPreConteggioAttivo(false);
 
             setAccordoCorrente(null);
             setPosizionePallinoCorrente(1);
             setContoAllaRovescia(3);
+
+            setIstanteAvvioMetronomo(null);
         }, []);
 
+    /*
+     * PRE-CONTEGGIO
+     *
+     * Rimane completamente silenzioso.
+     * Serve solamente per:
+     *
+     * 3 → 2 → 1 → VIA
+     */
     useEffect(() => {
         if (!preConteggioAttivo) {
             return;
@@ -94,12 +123,10 @@ export function useEsercizioAccordi({
                 setContoAllaRovescia(
                     (valorePrecedente) => {
                         if (
-                            valorePrecedente >
-                            1
+                            valorePrecedente > 1
                         ) {
                             return (
-                                valorePrecedente -
-                                1
+                                valorePrecedente - 1
                             );
                         }
 
@@ -107,43 +134,46 @@ export function useEsercizioAccordi({
                             intervallo
                         );
 
-                        setContoAllaRovescia(
-                            0
-                        );
+                        setContoAllaRovescia(0);
 
-                        window.setTimeout(
-                            () => {
-                                const primoAccordo =
-                                    accordi.length >
-                                    0
-                                        ? selezionaAccordoCasuale(
-                                            accordi
-                                        )
-                                        : null;
+                        window.setTimeout(() => {
+                            const primoAccordo =
+                                accordi.length > 0
+                                    ? selezionaAccordoCasuale(
+                                        accordi
+                                    )
+                                    : null;
 
-                                setAccordoCorrente(
-                                    primoAccordo
-                                );
+                            setAccordoCorrente(
+                                primoAccordo
+                            );
 
-                                setPreConteggioAttivo(
-                                    false
-                                );
+                            setPosizionePallinoCorrente(
+                                1
+                            );
 
-                                setEsercizioAvviato(
-                                    true
-                                );
+                            /*
+                             * QUESTO è l'unico istante
+                             * di riferimento.
+                             *
+                             * Lo usa sia il pendolo
+                             * sia il sistema dei click.
+                             */
+                            const istanteAvvio =
+                                performance.now();
 
-                                setPosizionePallinoCorrente(
-                                    1
-                                );
+                            setIstanteAvvioMetronomo(
+                                istanteAvvio
+                            );
 
-                                suonoMetronomo(
-                                    true,
-                                    suonoMetronomoSelezionato
-                                );
-                            },
-                            300
-                        );
+                            setPreConteggioAttivo(
+                                false
+                            );
+
+                            setEsercizioAvviato(
+                                true
+                            );
+                        }, 300);
 
                         return 0;
                     }
@@ -159,13 +189,22 @@ export function useEsercizioAccordi({
         preConteggioAttivo,
         bpm,
         accordi,
-        suonoMetronomoSelezionato,
     ]);
 
+    /*
+     * METRONOMO DELL'ESERCIZIO
+     *
+     * Questa è la STESSA logica temporale
+     * usata dal tab Metronomo.
+     *
+     * Pendolo e click partono dallo stesso
+     * istante assoluto.
+     */
     useEffect(() => {
         if (
             !esercizioAvviato ||
-            preConteggioAttivo
+            preConteggioAttivo ||
+            istanteAvvioMetronomo === null
         ) {
             return;
         }
@@ -173,68 +212,111 @@ export function useEsercizioAccordi({
         const intervalloMetronomo =
             calcolaIntervalloMetronomo(bpm);
 
-        const intervallo =
-            window.setInterval(() => {
-                setPosizionePallinoCorrente(
-                    (posizionePrecedente) => {
-                        if (
-                            posizionePrecedente >=
-                            suddivisioniPerBattuta
-                        ) {
-                            if (
-                                accordi.length >
-                                0
-                            ) {
-                                setAccordoCorrente(
-                                    (
-                                        accordoPrecedente
-                                    ) =>
-                                        selezionaAccordoCasuale(
-                                            accordi,
-                                            accordoPrecedente
-                                        )
-                                );
-                            }
+        /*
+         * Il pendolo parte dal centro.
+         *
+         * La prima estremità viene raggiunta
+         * dopo metà intervallo.
+         */
+        const primoClick =
+            istanteAvvioMetronomo +
+            intervalloMetronomo / 2;
 
-                            suonoMetronomo(
-                                true,
-                                suonoMetronomoSelezionato
-                            );
+        let numeroClick = 0;
+        let posizioneCorrente = 1;
+        let primoTempoEseguito = false;
 
-                            return 1;
-                        }
+        const programmaClick = () => {
+            const istanteClick =
+                primoClick +
+                numeroClick *
+                intervalloMetronomo;
 
-                        const nuovaPosizione =
-                            posizionePrecedente +
-                            1;
+            const attesa =
+                Math.max(
+                    0,
+                    istanteClick -
+                    performance.now()
+                );
 
-                        const accentato =
-                            tempoMusicale.accenti.includes(
-                                nuovaPosizione
-                            );
+            riferimentoTimerMetronomo.current =
+                window.setTimeout(() => {
+                    /*
+                     * Se siamo tornati sulla posizione 1,
+                     * significa che inizia una nuova battuta.
+                     *
+                     * Cambiamo accordo PRIMA del click
+                     * del nuovo primo tempo.
+                     */
+                    if (
+                        posizioneCorrente === 1 &&
+                        primoTempoEseguito &&
+                        accordi.length > 0
+                    ) {
+                        setAccordoCorrente(
+                            (accordoPrecedente) =>
+                                selezionaAccordoCasuale(
+                                    accordi,
+                                    accordoPrecedente
+                                )
+                        );
+                    }
 
-                        suonoMetronomo(
-                            accentato,
-                            suonoMetronomoSelezionato
+                    const accentato =
+                        tempoMusicale.accenti.includes(
+                            posizioneCorrente
                         );
 
-                        return nuovaPosizione;
-                    }
-                );
-            }, intervalloMetronomo);
+                    /*
+                     * CLICK esattamente nello stesso
+                     * momento in cui il pendolo
+                     * raggiunge l'estremità.
+                     */
+                    suonoMetronomo(
+                        accentato,
+                        suonoMetronomoSelezionato
+                    );
+
+                    setPosizionePallinoCorrente(
+                        posizioneCorrente
+                    );
+
+                    primoTempoEseguito = true;
+
+                    posizioneCorrente =
+                        posizioneCorrente >=
+                        tempoMusicale
+                            .suddivisioniPerBattuta
+                            ? 1
+                            : posizioneCorrente + 1;
+
+                    numeroClick += 1;
+
+                    programmaClick();
+                }, attesa);
+        };
+
+        programmaClick();
 
         return () => {
-            window.clearInterval(
-                intervallo
-            );
+            if (
+                riferimentoTimerMetronomo.current !== null
+            ) {
+                window.clearTimeout(
+                    riferimentoTimerMetronomo.current
+                );
+
+                riferimentoTimerMetronomo.current =
+                    null;
+            }
         };
     }, [
         esercizioAvviato,
         preConteggioAttivo,
+        istanteAvvioMetronomo,
         bpm,
-        suddivisioniPerBattuta,
+        tempoMusicale,
         accordi,
-        tempoMusicale.accenti,
         suonoMetronomoSelezionato,
     ]);
 
@@ -244,6 +326,7 @@ export function useEsercizioAccordi({
         accordoCorrente,
         posizionePallinoCorrente,
         contoAllaRovescia,
+        istanteAvvioMetronomo,
         avviaEsercizio,
         fermaEsercizio,
     };

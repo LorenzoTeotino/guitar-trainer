@@ -8,19 +8,18 @@ import {
 interface ProprietaMetronomoMeccanico {
     bpm: number;
     metronomoAvviato: boolean;
+    istanteAvvioMetronomo: number | null;
 }
 
 export default function MetronomoMeccanico({
                                                bpm,
                                                metronomoAvviato,
+                                               istanteAvvioMetronomo,
                                            }: ProprietaMetronomoMeccanico) {
     const riferimentoPendolo =
         useRef<HTMLDivElement | null>(null);
 
     const riferimentoAnimazione =
-        useRef<number | null>(null);
-
-    const riferimentoInizio =
         useRef<number | null>(null);
 
     useEffect(() => {
@@ -31,7 +30,10 @@ export default function MetronomoMeccanico({
             return;
         }
 
-        if (!metronomoAvviato) {
+        if (
+            !metronomoAvviato ||
+            istanteAvvioMetronomo === null
+        ) {
             if (
                 riferimentoAnimazione.current !== null
             ) {
@@ -43,34 +45,21 @@ export default function MetronomoMeccanico({
             riferimentoAnimazione.current =
                 null;
 
-            riferimentoInizio.current =
-                null;
-
             pendolo.style.transform =
                 "translateX(-50%) rotate(0deg)";
 
             return;
         }
 
-        riferimentoInizio.current =
-            null;
+        const durataCiclo =
+            (60000 / bpm) * 2;
 
         const animaPendolo = (
             tempoCorrente: number
         ) => {
-            if (
-                riferimentoInizio.current === null
-            ) {
-                riferimentoInizio.current =
-                    tempoCorrente;
-            }
-
             const tempoTrascorso =
                 tempoCorrente -
-                riferimentoInizio.current;
-
-            const durataCiclo =
-                (60000 / bpm) * 2;
+                istanteAvvioMetronomo;
 
             const angolo =
                 30 *
@@ -113,6 +102,7 @@ export default function MetronomoMeccanico({
     }, [
         bpm,
         metronomoAvviato,
+        istanteAvvioMetronomo,
     ]);
 
     return (
