@@ -16,11 +16,6 @@ import {
     suonoMetronomo,
 } from "@/servizi/metronomo/servizioMetronomo";
 
-export type PosizionePendolo =
-    | "centro"
-    | "sinistra"
-    | "destra";
-
 interface ProprietaUseMetronomo {
     bpm: number;
     tempoMusicale: TempoMusicale;
@@ -43,17 +38,11 @@ export function useMetronomo({
     ] = useState(1);
 
     const [
-        posizionePendolo,
-        setPosizionePendolo,
-    ] = useState<PosizionePendolo>("centro");
+        istanteAvvioMetronomo,
+        setIstanteAvvioMetronomo,
+    ] = useState<number | null>(null);
 
-    const latoSuccessivo =
-        useRef<"sinistra" | "destra">("destra");
-
-    const riferimentoIntervallo =
-        useRef<number | null>(null);
-
-    const riferimentoPrimoMovimento =
+    const riferimentoTimer =
         useRef<number | null>(null);
 
     const avviaMetronomo =
@@ -61,26 +50,44 @@ export function useMetronomo({
             await preparaMetronomo();
 
             setPosizionePallinoCorrente(1);
-            setPosizionePendolo("centro");
 
-            latoSuccessivo.current =
-                "destra";
+            /*
+             * Questo momento viene condiviso
+             * sia dall'audio sia dal pendolo.
+             */
+            const istanteAvvio =
+                performance.now();
+
+            setIstanteAvvioMetronomo(
+                istanteAvvio
+            );
 
             setMetronomoAvviato(true);
         }, []);
 
     const fermaMetronomo =
         useCallback(() => {
+            if (
+                riferimentoTimer.current !== null
+            ) {
+                window.clearTimeout(
+                    riferimentoTimer.current
+                );
+
+                riferimentoTimer.current =
+                    null;
+            }
+
             setMetronomoAvviato(false);
             setPosizionePallinoCorrente(1);
-            setPosizionePendolo("centro");
-
-            latoSuccessivo.current =
-                "destra";
+            setIstanteAvvioMetronomo(null);
         }, []);
 
     useEffect(() => {
-        if (!metronomoAvviato) {
+        if (
+            !metronomoAvviato ||
+            istanteAvvioMetronomo === null
+        ) {
             return;
         }
 
@@ -88,90 +95,79 @@ export function useMetronomo({
             calcolaIntervalloMetronomo(bpm);
 
         /*
-         * Il pendolo parte dal centro.
+         * Con il movimento sinusoidale:
          *
-         * Per arrivare alla prima estremità
-         * gli facciamo percorrere metà intervallo.
+         * centro -> estremità = metà intervallo
+         *
+         * Poi:
+         * estremità -> estremità = intervallo completo.
          */
-        const primoMovimento =
-            window.setTimeout(() => {
-                setPosizionePendolo(
-                    latoSuccessivo.current
+        const primoClick =
+            istanteAvvioMetronomo +
+            intervalloMetronomo / 2;
+
+        let numeroClick = 0;
+        let posizioneCorrente = 1;
+
+        const programmaClick = () => {
+            const istanteClick =
+                primoClick +
+                numeroClick *
+                intervalloMetronomo;
+
+            const attesa =
+                Math.max(
+                    0,
+                    istanteClick -
+                    performance.now()
                 );
 
-                latoSuccessivo.current =
-                    latoSuccessivo.current === "destra"
-                        ? "sinistra"
-                        : "destra";
-
-                suonoMetronomo(
-                    true,
-                    suonoMetronomoSelezionato
-                );
-
-                const intervallo =
-                    window.setInterval(() => {
-                        setPosizionePendolo(
-                            latoSuccessivo.current
+            riferimentoTimer.current =
+                window.setTimeout(() => {
+                    const accentato =
+                        tempoMusicale.accenti.includes(
+                            posizioneCorrente
                         );
 
-                        latoSuccessivo.current =
-                            latoSuccessivo.current === "destra"
-                                ? "sinistra"
-                                : "destra";
+                    suonoMetronomo(
+                        accentato,
+                        suonoMetronomoSelezionato
+                    );
 
-                        setPosizionePallinoCorrente(
-                            (posizionePrecedente) => {
-                                const palliniTotali =
-                                    tempoMusicale
-                                        .suddivisioniPerBattuta;
+                    setPosizionePallinoCorrente(
+                        posizioneCorrente
+                    );
 
-                                const nuovaPosizione =
-                                    posizionePrecedente >=
-                                    palliniTotali
-                                        ? 1
-                                        : posizionePrecedente + 1;
+                    posizioneCorrente =
+                        posizioneCorrente >=
+                        tempoMusicale
+                            .suddivisioniPerBattuta
+                            ? 1
+                            : posizioneCorrente + 1;
 
-                                const accentato =
-                                    tempoMusicale.accenti.includes(
-                                        nuovaPosizione
-                                    );
+                    numeroClick += 1;
 
-                                suonoMetronomo(
-                                    accentato,
-                                    suonoMetronomoSelezionato
-                                );
+                    programmaClick();
+                }, attesa);
+        };
 
-                                return nuovaPosizione;
-                            }
-                        );
-                    }, intervalloMetronomo);
-
-                riferimentoIntervallo.current =
-                    intervallo;
-            }, intervalloMetronomo / 2);
-
-        riferimentoPrimoMovimento.current =
-            primoMovimento;
+        programmaClick();
 
         return () => {
-            window.clearTimeout(
-                primoMovimento
-            );
-
             if (
-                riferimentoIntervallo.current !== null
+                riferimentoTimer.current !== null
             ) {
-                window.clearInterval(
-                    riferimentoIntervallo.current
+                window.clearTimeout(
+                    riferimentoTimer.current
                 );
-            }
 
-            riferimentoIntervallo.current =
-                null;
+                riferimentoTimer.current =
+                    null;
+            }
         };
     }, [
         metronomoAvviato,
+        istanteAvvioMetronomo,
         bpm,
         tempoMusicale,
         suonoMetronomoSelezionato,
@@ -180,7 +176,7 @@ export function useMetronomo({
     return {
         metronomoAvviato,
         posizionePallinoCorrente,
-        posizionePendolo,
+        istanteAvvioMetronomo,
         avviaMetronomo,
         fermaMetronomo,
     };

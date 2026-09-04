@@ -5,8 +5,6 @@ import MetronomoMeccanico from "@/componenti/metronomo/MetronomoMeccanico";
 import { TempoMusicale } from "@/tipi/TempoMusicale";
 import { TipoMetronomo } from "@/tipi/TipoMetronomo";
 
-import { PosizionePendolo } from "@/ganci/useMetronomo";
-
 interface ProprietaConfigurazioneMetronomo {
     bpm: number;
     tempoMusicale: TempoMusicale;
@@ -15,7 +13,6 @@ interface ProprietaConfigurazioneMetronomo {
     metronomoAvviato: boolean;
 
     posizionePallinoCorrente: number;
-    posizionePendolo: PosizionePendolo;
 
     diminuisciBpm: () => void;
     aumentaBpm: () => void;
@@ -36,7 +33,6 @@ export default function ConfigurazioneMetronomo({
                                                     tipoMetronomo,
                                                     metronomoAvviato,
                                                     posizionePallinoCorrente,
-                                                    posizionePendolo,
                                                     diminuisciBpm,
                                                     aumentaBpm,
                                                     alCambioBpm,
@@ -82,8 +78,8 @@ export default function ConfigurazioneMetronomo({
                 ) : (
                     <MetronomoMeccanico
                         bpm={bpm}
-                        posizionePendolo={
-                            posizionePendolo
+                        metronomoAvviato={
+                            metronomoAvviato
                         }
                     />
                 )}

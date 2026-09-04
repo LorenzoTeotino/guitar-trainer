@@ -63,7 +63,6 @@ export default function PaginaPrincipale() {
     metronomoAvviato,
     posizionePallinoCorrente:
         posizionePallinoMetronomo,
-    posizionePendolo,
     avviaMetronomo,
     fermaMetronomo,
   } = useMetronomo({
@@ -328,9 +327,6 @@ export default function PaginaPrincipale() {
                   }
                   posizionePallinoCorrente={
                     posizionePallinoMetronomo
-                  }
-                  posizionePendolo={
-                    posizionePendolo
                   }
                   diminuisciBpm={
                     diminuisciBpm

@@ -508,7 +508,7 @@ button:not(:disabled) {
   position: relative;
 
   width: 280px;
-  height: 330px;
+  height: 350px;
 
   overflow: hidden;
 
@@ -522,10 +522,10 @@ button:not(:disabled) {
   position: absolute;
 
   left: 50%;
-  bottom: 42px;
+  bottom: 28px;
 
-  width: 3px;
-  height: 240px;
+  width: 2px;
+  height: 270px;
 
   background: #3b4665;
 
@@ -538,10 +538,10 @@ button:not(:disabled) {
   position: absolute;
 
   left: 50%;
-  bottom: 42px;
+  bottom: 28px;
 
-  width: 8px;
-  height: 250px;
+  width: 6px;
+  height: 280px;
 
   transform-origin: 50% calc(100% - 16px);
 
@@ -573,8 +573,8 @@ button:not(:disabled) {
   left: 50%;
   bottom: 16px;
 
-  width: 6px;
-  height: 225px;
+  width: 4px;
+  height: 255px;
 
   background: #9da8c7;
 
@@ -587,10 +587,10 @@ button:not(:disabled) {
   position: absolute;
 
   left: 50%;
-  top: 82px;
+  top: 67px;
 
-  width: 38px;
-  height: 38px;
+  width: 30px;
+  height: 42px;
 
   background: #8b5cf6;
 
